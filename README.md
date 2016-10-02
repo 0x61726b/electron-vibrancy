@@ -2,9 +2,9 @@
 
 This module is intended to give an [Electron](https://github.com/electron/electron) BrowserWindow blur on its behind. This isnt supported on Electron and this module uses native API calls to achieve the effect.
 
-![](http://i.imgur.com/yvkK4mY.png)
-
 ![](http://i.imgur.com/IgN5KDJ.png)
+
+![](http://i.imgur.com/yvkK4mY.png)
 
 
 # Running
