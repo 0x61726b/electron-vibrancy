@@ -13,10 +13,20 @@
                 "src/Init.cc",
             ],
             'conditions':[
-                ['OS=="mac"', {
-                  'xcode_settings': {
-                    'MACOSX_DEPLOYMENT_TARGET': '10.8'
-                    }
+                ['OS!="mac"', {
+                    "sources!": [
+                        "src/vibrancy_mac.cc"
+                    ]
+                }],
+                ['OS!="win"', {
+                    "sources!": [
+                        "src/vibrancy_win.cc"
+                    ]
+                }],
+                ['OS!="linux"', {
+                    "sources!": [
+                        "src/vibrancy_linux.cc"
+                    ]
                 }]
             ],
             "variables":{
