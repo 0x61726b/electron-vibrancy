@@ -20,7 +20,8 @@
     "build": "node-gyp build --target=1.4.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "nrebuild": "node-gyp rebuild --debug",
     "nbuild": "node-gyp build --debug",
-    "conf": "node-gyp configure --arch=x64"
+    "conf": "node-gyp configure --arch=x64",
+    "postinstall": "npm run rebuild"
   },
   "repository": {
     "type": "git",

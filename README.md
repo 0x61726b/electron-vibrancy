@@ -7,6 +7,13 @@ This module is intended to give an [Electron](https://github.com/electron/electr
 ![](http://i.imgur.com/IgN5KDJ.png)
 
 
+# Running
+```
+npm install
+npm test
+```
+
+
 # Things to note
 - Window must be transparent.
 - You can only blur the whole window, therefore only blurring behind a single element isnt possible.
