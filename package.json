@@ -1,0 +1,44 @@
+{
+  "name": "electron-vibrancy",
+  "version": "0.0.1",
+  "description": "Enable blurring the back of your transparent BrowserWindow using this simple module.",
+  "main": "index.js",
+  "devDependencies": {
+    "electron-prebuilt": "^1.4.2",
+    "nan": "^2.0.5",
+    "node-gyp": "^1.0.3",
+    "node-pre-gyp": "^0.6.19"
+  },
+  "dependencies": {
+    "async": "^1.5.2",
+    "bindings": "^1.2.1",
+    "node-inspector": "^0.12.5"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/electron.cmd test/main.js",
+    "rebuild": "node-gyp rebuild --target=1.4.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
+    "build": "node-gyp build --target=1.4.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
+    "nrebuild": "node-gyp rebuild --debug",
+    "nbuild": "node-gyp build --debug",
+    "conf": "node-gyp configure --arch=x64"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arkenthera/electron-vibrancy.git"
+  },
+  "keywords": [
+    "electron",
+    "vibrant",
+    "vibrancy",
+    "blur",
+    "transparent",
+    "transparency"
+  ],
+  "author": "arkenthera",
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/arkenthera/electron-vibrancy/issues"
+  },
+  "homepage": "https://github.com/arkenthera/electron-vibrancy#readme"
+}

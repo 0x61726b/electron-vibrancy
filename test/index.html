@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <style>
+    body {
+      margin: 40px;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: 100px 100px 100px;
+      grid-gap: 10px;
+      color: #444;
+      -webkit-app-region: drag;
+    }
+    .box {
+      color: #fff;
+      padding: 20px;
+      font-size: 150%;
+    }
+    .box.a {
+      background-color: rgba(255, 0, 0, 0.1);
+    }
+    .box.b {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+    .box.c {
+      background-color: rgba(0, 0, 255, 0.3);
+    }
+    .box.d {
+      background-color: rgba(255, 0, 0, 0.4);
+    }
+    .box.e {
+      background-color: rgba(0, 255, 0, 0.5);
+    }
+    .box.f {
+      background-color: rgba(0, 0,255, 0.6);
+    }
+    .vib-button {
+      text-decoration: none;
+      color: white;
+      font-size: 25px;
+    }
+  </style>
+  <body style="background-color: rgba(25,26,26,0); -webkit-user-select: none;">
+    <a href="#" onclick="enable();" class="vib-button">Enable Vibrancy</a>
+    <a href="#" onclick="disable();" class="vib-button">Disable Vibrancy</a>
+    <div class="wrapper">
+      <div class="box state">Vibrancy State: Enabled</div>
+      <div class="box a">Alpha 0.1</div>
+      <div class="box b">Alpha 0.2</div>
+      <div class="box c">Alpha 0.3</div>
+      <div class="box d">Alpha 0.4</div>
+      <div class="box e">Alpha 0.5</div>
+      <div class="box f">Alpha 0.6</div>
+    </div>
+  </body>
+  <script>
+    function enable() {
+      var electronWindow = require('electron').remote.getCurrentWindow();
+      var nativeHandleBuffer = electronWindow.getNativeWindowHandle();
+      var electronVibrancy = require('..');
+      electronVibrancy.SetVibrancy(true,nativeHandleBuffer);
+
+      //
+      document.querySelectorAll('.box.state')[0].innerHTML = "Vibrancy State: Enabled";
+    }
+    function disable() {
+      var electronWindow = require('electron').remote.getCurrentWindow();
+      var nativeHandleBuffer = electronWindow.getNativeWindowHandle();
+      var electronVibrancy = require('..');
+      electronVibrancy.SetVibrancy(false,nativeHandleBuffer);
+
+      //
+      document.querySelectorAll('.box.state')[0].innerHTML = "Vibrancy State: Disabled";
+    }
+  </script>
+</html>
