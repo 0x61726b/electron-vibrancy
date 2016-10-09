@@ -6,6 +6,8 @@ This module is intended to give an [Electron](https://github.com/electron/electr
 
 
 # Running
+
+Since this is a native addon, you will need your platforms build tools. Visual Studio,XCode etc.
 ```
 npm install
 npm test
