@@ -13,6 +13,8 @@ npm install
 npm test
 ```
 
+```npm install``` will compile the addon for Electron ```1.4.2```, if you are using different version, change the electron version at ```package.json``` scripts.
+
 
 # Things to note
 - Window must be transparent.
