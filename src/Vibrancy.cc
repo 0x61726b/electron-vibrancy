@@ -14,6 +14,9 @@
 //51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 //----------------------------------------------------------------------------
 #include "Vibrancy.h"
+
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 //----------------------------------------------------------------------------
 namespace Vibrancy
 {
@@ -43,13 +46,13 @@ namespace Vibrancy
 
 		bool toggleState = toggleStateObj->BooleanValue();
 		
-
-		unsigned char* bufferData = (unsigned char*)node::Buffer::Data(handleBuffer);
+	
+		char* bufferData = node::Buffer::Data(handleBuffer);
 		VibrancyHelper helper;
 		if(toggleState)
-			helper.EnableVibrancy(bufferData);
+			helper.EnableVibrancy((unsigned char*)bufferData);
 		else
-			helper.DisableVibrancy(bufferData);
+			helper.DisableVibrancy((unsigned char*)bufferData);
 
 	}
 }

@@ -29,6 +29,18 @@
                     ]
                 }]
             ],
+            "link_settings": {
+                        "libraries": [
+                            'Foundation.framework',
+                            'AppKit.framework',
+                            'ScriptingBridge.framework'
+                        ]
+            },
+            "xcode_settings": {
+                "OTHER_CFLAGS": [
+                    "-x objective-c++"
+                ]
+            },
             "variables":{
                 "CURRENT_DIR":"<!(echo %~dp0)"
             },
