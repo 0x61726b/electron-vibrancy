@@ -15,8 +15,10 @@
 //----------------------------------------------------------------------------
 #include "Vibrancy.h"
 
+#ifdef PLATFORM_OSX
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#endif
 //----------------------------------------------------------------------------
 namespace Vibrancy
 {
