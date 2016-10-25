@@ -20,6 +20,7 @@ npm test
 - Window must be transparent.
 - You can only blur the whole window, therefore only blurring behind a single element isnt possible.
 - If your window has a frame, the frame will also be blurred.
+- Requires Yosemite on macOS.
 
 ## How to use
 
@@ -45,3 +46,9 @@ mainWindow.on('ready-to-show',function() {
 
 ### Windows
 The addon use ```SetWindowCompositionAttribute``` on Windows 10, which is an undocumented API, which means it can be changed by Microsoft any time and break the functionality.
+
+### MacOS
+Requires Yosemite and above.
+
+### Linux
+Soon™
