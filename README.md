@@ -73,3 +73,9 @@ Requires Yosemite and above.
 
 ### Linux
 Soon™
+
+
+## License
+
+This project is under MIT.
+See [LICENSE](https://github.com/arkenthera/electron-vibrancy/blob/master/LICENSE)
