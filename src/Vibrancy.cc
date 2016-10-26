@@ -14,11 +14,6 @@
 //51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*/
 //----------------------------------------------------------------------------
 #include "Vibrancy.h"
-
-#ifdef PLATFORM_OSX
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#endif
 //----------------------------------------------------------------------------
 namespace Vibrancy
 {
@@ -43,6 +38,8 @@ namespace Vibrancy
 	{
 		v8::Local<v8::Object> toggleStateObj = info[0].As<v8::Object>();
 		v8::Local<v8::Object> handleBuffer = info[1].As<v8::Object>();
+		v8::Local<v8::Array> options = info[2].As<v8::Array>();
+
 		v8::Isolate* isolate = info.GetIsolate();
 		v8::HandleScope scope(isolate);
 
@@ -50,9 +47,13 @@ namespace Vibrancy
 		
 	
 		char* bufferData = node::Buffer::Data(handleBuffer);
+
+		// Options
+
+
 		VibrancyHelper helper;
 		if(toggleState)
-			helper.EnableVibrancy((unsigned char*)bufferData);
+			helper.EnableVibrancy((unsigned char*)bufferData,options);
 		else
 			helper.DisableVibrancy((unsigned char*)bufferData);
 

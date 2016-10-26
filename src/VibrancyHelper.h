@@ -26,8 +26,12 @@ namespace Vibrancy
 		VibrancyHelper() { };
 		~VibrancyHelper() { };
 
-		bool EnableVibrancy(unsigned char* buffer);
+		bool EnableVibrancy(unsigned char* buffer,v8::Local<v8::Array> options);
 		bool DisableVibrancy(unsigned char* buffer);
+
+		#ifdef PLATFORM_OSX
+		NSVisualEffectView *vibrantView;
+		#endif
 	};
 
 }

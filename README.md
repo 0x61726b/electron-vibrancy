@@ -22,6 +22,19 @@ npm test
 - If your window has a frame, the frame will also be blurred.
 - Requires Yosemite on macOS.
 
+
+### `SetVibrancy(state, windowBuffer, options)`
+
+* `state` Boolean
+* `windowBuffer` Buffer
+* `options` Object
+
+Enables or disables vibrancy for the window. Options are platform specific and optional.
+
+#### Options for macOS
+* `Material` Integer - The Material for NSVisualEffectMaterial. **0**: AppearanceBased, **1**: Light, **2**: Dark, **3**: Titlebar, **4**: Selection. See [here](https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc) for more info.
+
+
 ## How to use
 
 ```

@@ -22,12 +22,17 @@
 //----------------------------------------------------------------------------
 #include <nan.h>
 
+#define V8Value v8::Local<v8::Value>
+
 #if defined(_MSC_VER)
 #define PLATFORM_WIN32
 #elif defined(__linux__)
 #define PLATFORM_LINUX
 #elif defined(__APPLE__)
 #define PLATFORM_OSX
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import <objc/objc-runtime.h>
 #endif
 //----------------------------------------------------------------------------
 #endif

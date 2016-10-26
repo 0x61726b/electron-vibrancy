@@ -16,13 +16,10 @@
 
 #include "VibrancyHelper.h"
 
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-#import <objc/objc-runtime.h>
 
 namespace Vibrancy
 {
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer)
+	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
 	{
 		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
 
@@ -30,19 +27,45 @@ namespace Vibrancy
 		NSLog(@"%@",NSStringFromRect(rect)); //To verify the bounds
 
 		
-		NSVisualEffectView *vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
+		vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
  		[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-
  		[vibrantView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
+
+ 		if(options->Length() > 0)
+ 		{
+ 			// Options
+	 		V8Value vMaterial = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Material"));
+	 		if(!vMaterial->IsNull() && vMaterial->IsInt32())
+	 		{
+	 			int materialNumber = vMaterial->Int32Value();
+
+		 		if(materialNumber >= 0 && materialNumber <= 14) // would crash if you give anything other than those specified here https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc
+		 		{
+		 			[vibrantView setMaterial:(NSVisualEffectMaterial)materialNumber];
+		 		}
+	 		}
+
+	 		//Alpha
+	 		V8Value vAlpha = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Alpha"));
+
+	 		if(!vAlpha->IsNull() && vAlpha->IsNumber())
+	 		{
+	 			double alphaNumber = vAlpha->NumberValue();
+	 			//[vibrantView setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.1]];
+	 			vibrantView.alphaValue = alphaNumber;
+	 		}
+ 		}
 
  		[view addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
 
-
-		return false;
+		return true;
 	}
 
 	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
 	{
-		return false;
+		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
+
+		[[[view subviews] objectAtIndex:0] removeFromSuperview];
+		return true;
 	}
 }

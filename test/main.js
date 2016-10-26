@@ -21,6 +21,6 @@ app.on('ready', function () {
 
       var nativeHandleBuffer = mainWindow.getNativeWindowHandle();
       var electronVibrancy = require('..');
-      console.log(electronVibrancy.SetVibrancy(true,nativeHandleBuffer));
+      electronVibrancy.SetVibrancy(true,nativeHandleBuffer, { Material: 0 });
   })
 })
