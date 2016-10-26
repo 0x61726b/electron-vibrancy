@@ -34,8 +34,24 @@ There is a single method that toggles the vibrancy.
 Enables or disables vibrancy for the window. Options are platform specific and optional.
 
 #### Options for macOS
-* `Material` Integer - The Material for NSVisualEffectMaterial. **0**: AppearanceBased, **1**: Light, **2**: Dark, **3**: Titlebar, **4**: Selection. See [here](https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc) for more info.
+* `Material` Integer - The Material for NSVisualEffectMaterial.
 
+**0**: AppearanceBased
+
+**1**: Light
+
+**2**: Dark
+
+**3**: Titlebar
+
+**4**: Selection.
+
+See [here](https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc) for more info.
+
+
+```
+electronVibrancy.SetVibrancy(true,browserWindowInstance.getNativeWindowHandle(), { Material: 0 });
+```
 
 ## How to use
 
