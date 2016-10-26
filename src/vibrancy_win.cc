@@ -58,19 +58,17 @@ namespace Vibrancy
 			}
 			else
 			{
-
+				//TODO implement for win8/win7
 			}
 			FreeLibrary(hModule);
 		}
 		return result;
 	}
 
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer)
+	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
 	{
 		unsigned long handle = *reinterpret_cast<unsigned long*>(windowHandleBuffer);
 		HWND hwnd = (HWND)handle;
-
-		HWND firstChild = GetWindow(hwnd,GW_CHILD);
 		return SetBlurBehind(hwnd,true);
 	}
 
@@ -78,8 +76,6 @@ namespace Vibrancy
 	{
 		unsigned long handle = *reinterpret_cast<unsigned long*>(windowHandleBuffer);
 		HWND hwnd = (HWND)handle;
-
-		HWND firstChild = GetWindow(hwnd,GW_CHILD);
 		return SetBlurBehind(hwnd,false);
 	}
 }
