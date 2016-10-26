@@ -22,6 +22,8 @@ npm test
 - If your window has a frame, the frame will also be blurred.
 - Requires Yosemite on macOS.
 
+# API
+There is a single method that toggles the vibrancy.
 
 ### `SetVibrancy(state, windowBuffer, options)`
 
