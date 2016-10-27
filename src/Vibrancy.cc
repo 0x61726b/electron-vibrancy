@@ -55,14 +55,14 @@ namespace Vibrancy
 	
 		char* bufferData = node::Buffer::Data(handleBuffer);
 
-		// Options
-
-
+		bool result = false;
 		VibrancyHelper helper;
 		if(toggleState)
-			helper.EnableVibrancy((unsigned char*)bufferData,options);
+			result = helper.EnableVibrancy((unsigned char*)bufferData,options);
 		else
-			helper.DisableVibrancy((unsigned char*)bufferData);
+			result = helper.DisableVibrancy((unsigned char*)bufferData);
+
+		info.GetReturnValue().Set(result);
 
 	}
 }

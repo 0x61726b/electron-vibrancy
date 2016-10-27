@@ -22,6 +22,8 @@
 //----------------------------------------------------------------------------
 
 #include "VibrancyHelper.h"
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
 
 namespace Vibrancy
 {
@@ -47,42 +49,73 @@ namespace Vibrancy
 		ACCENT_ENABLE_BLURBEHIND = 3
 	};
 
-	bool SetBlurBehind(HWND hwnd,bool state)
+	bool IsWindows10()
+	{
+		OSVERSIONINFOA info;
+		ZeroMemory(&info, sizeof(OSVERSIONINFOA));
+		info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOA);
+
+		GetVersionEx(&info);
+
+		return info.dwMajorVersion == 10;
+	}
+
+	bool SetBlurBehind(HWND hwnd, bool state)
 	{
 		bool result = false;
-		const HINSTANCE hModule = LoadLibrary(TEXT("user32.dll"));
-		if(hModule)
-		{
-			typedef BOOL(WINAPI*pSetWindowCompositionAttribute)(HWND,WINCOMPATTRDATA*);
-			const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(hModule,"SetWindowCompositionAttribute");
 
-			// Only works on Win10
-			if(SetWindowCompositionAttribute)
+		if (IsWindows10())
+		{
+			const HINSTANCE hModule = LoadLibrary(TEXT("user32.dll"));
+			if (hModule)
 			{
-				ACCENTPOLICY policy ={state ? ACCENT_ENABLE_BLURBEHIND : ACCENT_DISABLE ,0,0,0};
-				WINCOMPATTRDATA data ={19,&policy,sizeof(ACCENTPOLICY)};
-				result = SetWindowCompositionAttribute(hwnd,&data);
+				typedef BOOL(WINAPI*pSetWindowCompositionAttribute)(HWND, WINCOMPATTRDATA*);
+				const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(hModule, "SetWindowCompositionAttribute");
+
+				// Only works on Win10
+				if (SetWindowCompositionAttribute)
+				{
+					ACCENTPOLICY policy = { state ? ACCENT_ENABLE_BLURBEHIND : ACCENT_DISABLE ,0,0,0 };
+					WINCOMPATTRDATA data = { 19,&policy,sizeof(ACCENTPOLICY) };
+					result = SetWindowCompositionAttribute(hwnd, &data);
+				}
+				FreeLibrary(hModule);
 			}
-			else
+		}
+		else
+		{
+			//TODO implement for win8/win7
+			HRESULT hr = S_OK;
+
+			// Create and populate the Blur Behind structure
+			DWM_BLURBEHIND bb = { 0 };
+
+			// Enable Blur Behind and apply to the entire client area
+			bb.dwFlags = DWM_BB_ENABLE;
+			bb.fEnable = true;
+			bb.hRgnBlur = NULL;
+
+			// Apply Blur Behind
+			hr = DwmEnableBlurBehindWindow(hwnd, &bb);
+			if (SUCCEEDED(hr))
 			{
-				//TODO implement for win8/win7
+				result = true;
 			}
-			FreeLibrary(hModule);
 		}
 		return result;
 	}
 
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
+	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer, v8::Local<v8::Array> options)
 	{
 		unsigned long handle = *reinterpret_cast<unsigned long*>(windowHandleBuffer);
 		HWND hwnd = (HWND)handle;
-		return SetBlurBehind(hwnd,true);
+		return SetBlurBehind(hwnd, true);
 	}
 
 	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
 	{
 		unsigned long handle = *reinterpret_cast<unsigned long*>(windowHandleBuffer);
 		HWND hwnd = (HWND)handle;
-		return SetBlurBehind(hwnd,false);
+		return SetBlurBehind(hwnd, false);
 	}
 }

@@ -16,8 +16,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/electron test/main.js",
-    "rebuild": "node-gyp rebuild --target=1.4.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
-    "build": "node-gyp build --target=1.4.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
+    "rebuild": "node-gyp rebuild --target=1.4.2 --arch=x64 --debug --dist-url=https://atom.io/download/atom-shell",
+    "build": "node-gyp build --target=1.4.2 --arch=x64 --debug --dist-url=https://atom.io/download/atom-shell",
     "nrebuild": "node-gyp rebuild --debug",
     "nbuild": "node-gyp build --debug",
     "conf": "node-gyp configure --arch=x64",

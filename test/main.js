@@ -17,10 +17,15 @@ app.on('ready', function () {
   mainWindow.loadURL('file://' + __dirname + '/index.html')
   mainWindow.on('closed', function () { mainWindow = null })
   mainWindow.on('ready-to-show',function() {
-    mainWindow.show();
-
       var nativeHandleBuffer = mainWindow.getNativeWindowHandle();
       var electronVibrancy = require('..');
-      electronVibrancy.SetVibrancy(true,nativeHandleBuffer, { Material: 0 });
+      var vib = electronVibrancy.SetVibrancy(true,nativeHandleBuffer, { Material: 0 });
+      console.log(vib);
+
+      mainWindow.show();
+
+      //Windows8.1 hack
+      //mainWindow.minimize();
+      //mainWindow.restore();
   })
 })
