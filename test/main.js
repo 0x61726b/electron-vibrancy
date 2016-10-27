@@ -6,8 +6,8 @@ var mainWindow = null
 app.on('ready', function () {
   mainWindow = new BrowserWindow({
     center: true,
-    width: 800,
-    height: 600,
+    width: 1400,
+    height: 900,
     minHeight: 100,
     minWidth: 100,
     transparent: true,
@@ -23,6 +23,7 @@ app.on('ready', function () {
       console.log(vib);
 
       mainWindow.show();
+      mainWindow.openDevTools();
 
       //Windows8.1 hack
       //mainWindow.minimize();
