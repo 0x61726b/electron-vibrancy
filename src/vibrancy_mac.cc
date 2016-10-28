@@ -24,8 +24,7 @@
 #include "VibrancyHelper.h"
 
 #import <CoreServices/CoreServices.h>
-#include <map>
-#include <utility>
+
 
 // NSVisualEffectMaterialAppearanceBased 10.10 - 0
 // NSVisualEffectMaterialLight 10.10 		   - 1
@@ -69,9 +68,9 @@ namespace Vibrancy
 		NSLog(@"%@",NSStringFromRect(rect)); //To verify the bounds
 
 		
-		fullSizeVibrantView_ = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
- 		[fullSizeVibrantView_ setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
- 		[fullSizeVibrantView_ setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
+		NSVisualEffectView* vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
+ 		[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+ 		[vibrantView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
 
  		if(options->Length() > 0)
  		{
@@ -87,25 +86,16 @@ namespace Vibrancy
 		 			{
 		 				return false;
 		 			}
-		 			[fullSizeVibrantView_ setMaterial:(NSVisualEffectMaterial)materialNumber];
+		 			[vibrantView setMaterial:(NSVisualEffectMaterial)materialNumber];
 		 		}
-	 		}
-
-	 		//Alpha
-	 		V8Value vAlpha = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Alpha"));
-
-	 		if(!vAlpha->IsNull() && vAlpha->IsNumber())
-	 		{
-	 			double alphaNumber = vAlpha->NumberValue();
-	 			//[vibrantView setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.1]];
-	 			fullSizeVibrantView_.alphaValue = alphaNumber;
 	 		}
  		}
 
  		//[view addSubview:fullSizeVibrantView_ positioned:NSWindowBelow relativeTo:nil];
- 		[view.window.contentView addSubview:fullSizeVibrantView_ positioned:NSWindowBelow relativeTo:nil];
+ 		[view.window.contentView addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
 
- 		views_.push_back(fullSizeVibrantView_);
+ 		int l = views_.size();
+ 		views_.insert(std::make_pair(l,vibrantView));
 
 		return true;
 	}
@@ -114,8 +104,6 @@ namespace Vibrancy
 	{
 		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
 
-		NSLog(@"Disabling Vibrancy - View count %i",views_.size());
-
 		if(views_.size() > 0)
 		{
 			NSLog(@"Disabling Vibrancy - View count %i",views_.size());
@@ -123,10 +111,12 @@ namespace Vibrancy
 			NSView* contentView = (NSView*)view.window.contentView;
 			for(int i=0; i < views_.size();++i)
 			{
-				NSView* viewToRemove = [[contentView subviews] objectAtIndex:i];
+				NSView* viewToRemove = views_[i];
 				NSLog(@"Removing subview %i %@",i,viewToRemove);
 				[viewToRemove removeFromSuperview];
 			}
+
+			views_.clear();
 		}
 		return true;
 	}
@@ -142,51 +132,58 @@ namespace Vibrancy
 		viewOptions.ViewId = -1; 
 		viewOptions.Material = 0;
 
-		if(options->Length() > 0)
+		v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+		V8Value vPosition = options->Get(v8::String::NewFromUtf8(isolate, "Position"));
+		V8Value vSize = options->Get(v8::String::NewFromUtf8(isolate,"Size"));
+
+		V8Value vAutoResizeMask = options->Get(v8::String::NewFromUtf8(isolate, "ResizeMask")); // //Integer width = 0,height = 1,both = 2,off = 3
+		V8Value vViewId = options->Get(v8::String::NewFromUtf8(isolate, "ViewId"));
+		V8Value vMaterial = options->Get(v8::String::NewFromUtf8(isolate,"Material"));
+
+		if(!vMaterial->IsNull() && vMaterial->IsInt32())
 		{
-			V8Array vPosition = v8::Local<v8::Array>::Cast(options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Position")));// { x,y }
-			V8Array vSize = v8::Local<v8::Array>::Cast(options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Size"))); // { width,height }
-			V8Value vAutoResizeMask = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ResizeMask")); // //Integer width = 0,height = 1,both = 2,off = 3
-			V8Value vViewId = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));
-			V8Value vMaterial = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Material"));
-
-			if(!vMaterial->IsNull() && vMaterial->IsInt32())
-				viewOptions.Material = vMaterial->Int32Value();
-
-			if(!vViewId->IsNull() && vViewId->IsInt32())
-				viewOptions.ViewId = vViewId->Int32Value();
-			
-			if(!vSize->IsNull())
-			{
-				// Size
-				V8Value vWidth = vSize->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "width"));// Integer
-				V8Value vHeight = vSize->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "height"));// Integer
-
-				if(vWidth->IsInt32())
-					viewOptions.Width = vWidth->Int32Value();
-
-				if(vHeight->IsInt32())
-					viewOptions.Height = vHeight->Int32Value();
-			}
-
-			if(!vPosition->IsNull())
-			{
-				// Position
-				V8Value vX = vPosition->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "x"));// Integer
-				V8Value vY = vPosition->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "y"));// Integer
-
-				if(vX->IsInt32())
-					viewOptions.X = vX->Int32Value();
-
-				if(vY->IsInt32())
-					viewOptions.Y = vY->Int32Value();
-			}
-
-			if(!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
-			{
-				viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
-			}
+			viewOptions.Material = vMaterial->Int32Value();
 		}
+
+		if(!vViewId->IsNull() && vViewId->IsInt32())
+			viewOptions.ViewId = vViewId->Int32Value();
+		
+
+		if(!vSize->IsUndefined() && !vSize->IsNull())
+		{
+			V8Array vaSize = v8::Local<v8::Array>::Cast(vSize); // { width,height }
+			// Size
+			V8Value vWidth = vaSize->Get(v8::String::NewFromUtf8(isolate, "width"));// Integer
+			V8Value vHeight = vaSize->Get(v8::String::NewFromUtf8(isolate,"height"));// Integer
+
+			if(!vWidth->IsNull() && vWidth->IsInt32())
+				viewOptions.Width = vWidth->Int32Value();
+
+			if(!vHeight->IsNull() && vHeight->IsInt32())
+				viewOptions.Height = vHeight->Int32Value();
+		}
+
+		if(!vPosition->IsUndefined() && !vPosition->IsNull())
+		{
+			V8Array vaPosition = v8::Local<v8::Array>::Cast(vPosition);// { x,y }
+			// Position
+			V8Value vX = vaPosition->Get(v8::String::NewFromUtf8(isolate, "x"));// Integer
+			V8Value vY = vaPosition->Get(v8::String::NewFromUtf8(isolate, "y"));// Integer
+
+			if(!vX->IsNull() && vX->IsInt32())
+				viewOptions.X = vX->Int32Value();
+
+			if(!vY->IsNull() && vY->IsInt32())
+				viewOptions.Y = vY->Int32Value();
+		}
+
+		if(!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
+		{
+			viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
+		}
+
+		NSLog(@"X:%i Y:%i W:%i H:%i Resize:%i Mat:%i ViewId: %i",viewOptions.X,viewOptions.Y,viewOptions.Width,viewOptions.Height, viewOptions.ResizeMask,viewOptions.Material,viewOptions.ViewId);
 		return viewOptions;
 	}
 
@@ -202,6 +199,17 @@ namespace Vibrancy
 		NSRect rect = [[view window] frame];
 
 		ViewOptions viewOptions = GetOptions(options);
+
+		if(viewOptions.Width <= 0 || viewOptions.Width > rect.size.width)
+			return viewId;
+
+		if(viewOptions.Height <= 0 || viewOptions.Height > rect.size.height)
+			return viewId;
+
+		if(viewOptions.X < 0)
+			return viewId;
+		if(viewOptions.Y < 0)
+			return viewId;
 		
 
 		NSVisualEffectView* vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(viewOptions.X, viewOptions.Y, viewOptions.Width, viewOptions.Height)];
@@ -215,10 +223,11 @@ namespace Vibrancy
 			[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 
 		[vibrantView setMaterial:(NSVisualEffectMaterial)viewOptions.Material];
-		[view addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
+
+		[view.window.contentView addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
 
 		viewId = views_.size();
-		views_.push_back(vibrantView);
+ 		views_.insert(std::make_pair(viewId,vibrantView));
 		return viewId;
 	}
 	bool VibrancyHelper::UpdateView(unsigned char* buffer,v8::Local<v8::Array> options)
@@ -232,13 +241,28 @@ namespace Vibrancy
 		
 		NSVisualEffectView* vibrantView = views_[viewOptions.ViewId];
 
-		// TODO 
-		// Retrieve views current size,position and make them default instead so null parameters dont affect
-
 		if(!vibrantView)
 			return false;
 
-		[vibrantView setFrame:NSMakeRect(viewOptions.X, viewOptions.Y, viewOptions.Width, viewOptions.Height)];
+		NSRect frame = [view.window frame];
+
+		if(viewOptions.Width == 0)
+			viewOptions.Width = frame.size.width;
+		if(viewOptions.Height == 0)
+			viewOptions.Height = frame.size.height;
+
+		if(viewOptions.Width <= 0 && viewOptions.Width < frame.size.width)
+			return false;
+
+		if(viewOptions.Height <= 0 && viewOptions.Height < frame.size.height)
+			return false;
+
+		if(viewOptions.X < 0)
+			return false;
+		if(viewOptions.Y < 0)
+			return false;
+
+		[vibrantView setFrame:NSMakeRect(viewOptions.X,viewOptions.Y,viewOptions.Width, viewOptions.Height)];
 		[vibrantView setMaterial:(NSVisualEffectMaterial)viewOptions.Material];
 
 		return true;
@@ -249,25 +273,33 @@ namespace Vibrancy
 		NSView* view = *reinterpret_cast<NSView**>(buffer);
 
 		bool result = false;
-		if(options->Length() > 0)
-		{
-			V8Value vView = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));// Integer
+		V8Value vView = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));// Integer
 
-			if(vView->IsNull() || !vView->IsInt32())
-				return result;
-
-			int viewId = vView->Int32Value();
-
-			if(viewId == -1 || viewId > views_.size())
-				return result;
-
-			NSVisualEffectView* vibrantView = views_[viewId];
-
-			views_.erase(views_.begin() + viewId);
-
-			[[[view subviews] objectAtIndex:viewId] removeFromSuperview];
-		}
-		else
+		if(vView->IsNull() || !vView->IsInt32())
 			return result;
+
+		int viewId = vView->Int32Value();
+
+		if(viewId == -1 || viewId > views_.size())
+			return result;
+
+		std::map<int,NSVisualEffectView*>::iterator It = views_.find(viewId);
+
+		if(It == views_.end())
+			return false;
+
+		NSVisualEffectView* vibrantView = It->second;
+
+		if(!vibrantView)
+			return result;
+
+		views_.erase(viewId);
+
+		NSView* contentView = (NSView*)view.window.contentView;
+		NSView* viewToRemove = vibrantView;
+		NSLog(@"Removing subview %i %@",viewId,viewToRemove);
+		[viewToRemove removeFromSuperview];
+
+		return true;
 	}
 }

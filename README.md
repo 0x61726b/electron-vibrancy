@@ -28,68 +28,75 @@ See Platforms section for more info.
 # API
 There are several methods depending on what you want to do and what platform you are on.
 
-### `SetVibrancy(state, windowBuffer, options)` _win_ , _macos_
+### `SetVibrancy(window, material)` _win_ , _macOS_
 
-* `state` Boolean
-* `windowBuffer` Buffer
-* `options` Object
-  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.
-  	* `0` - NSVisualEffectMaterialAppearanceBased *10.10+*
-  	* `1` - NSVisualEffectMaterialLight *10.10+*
-  	* `2` - NSVisualEffectMaterialDark *10.10+*
-  	* `3` - NSVisualEffectMaterialTitlebar *10.10+*
-  	* `4` - NSVisualEffectMaterialSelection *10.11+*
-  	* `5` - NSVisualEffectMaterialMenu *10.11+*
-  	* `6` - NSVisualEffectMaterialPopover *10.11+*
-  	* `7` - NSVisualEffectMaterialSidebar *10.11+*
-  	* `8` - NSVisualEffectMaterialMediumLight *10.11+*
-  	* `9` - NSVisualEffectMaterialUltraDark *10.11+*
+Returns `Integer`.View id of `NSVisualEffectView`. You need this for `UpdateView` or `RemoveView`.
+
+* `window` `BrowserWindow` instance
+* `Material` - Integer. The Material for `NSVisualEffectMaterial`.
+  * `0` - `NSVisualEffectMaterialAppearanceBased` *10.10+*
+  * `1` - `NSVisualEffectMaterialLight` *10.10+*
+  * `2` - `NSVisualEffectMaterialDark` *10.10+*
+  * `3` - `NSVisualEffectMaterialTitlebar` *10.10+*
+  * `4` - `NSVisualEffectMaterialSelection` *10.11+*
+  * `5` - `NSVisualEffectMaterialMenu` *10.11+*
+  * `6` - `NSVisualEffectMaterialPopover` *10.11+*
+  * `7` - `NSVisualEffectMaterialSidebar` *10.11+*
+  * `8` - `NSVisualEffectMaterialMediumLight` *10.11+*
+  * `9` - `NSVisualEffectMaterialUltraDark` *10.11+*
 
 Enables or disables vibrancy for the **WHOLE** window. It will resize automatically. If you want something custom, see `AddView`.
 See [here](https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc) for more info about `NSVisualEffectMaterial`.
 
 
-### `AddView(windowBuffer,options)` _macos_
+### `DisableVibrancy(window)` _win_, _macOS_
+
+Disables Vibrancy completely.
+
+* `window` `BrowserWindow` instance
+
+
+### `AddView(window,options)` _macOS_
 
 Returns `Integer`.View id of `NSVisualEffectView`. You need this for `UpdateView` or `RemoveView`.
 
-* `windowBuffer` Buffer
+* `window` `BrowserWindow` instance
 * `options` Object
-  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.
-  * `Position` Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
-    * `x` - Integer
-    * `y` - Integer
-  * `Size` Size of the `NSVisualEffectView`. Should not be larger than the window.
-    * `width` - Integer
-    * `height` - Integer
-  * `ResizeMask`- Integer.Resize mask for the `NSVisualEffectView`. `0` for auto `width` resize, `1` for auto `height` resize, `2` for both, `3` for no resizing.
+  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.See `SetVibrancy` method for material properties.
+  * `X` X Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
+  * `Y` X Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
+  * `Width` - Integer Width of the `NSVisualEffectView`. Should not be larger than the window's.
+  * `Height` - Integer Height of the `NSVisualEffectView`. Should not be larger than the window's.
+  * `ResizeMask`- Integer.Resize mask for the `NSVisualEffectView`.
+    * `0` - Auto width resize
+    * `1` - Auto height resize
+    * `2` - Auto width-height resize
+    * `3` - No resize
 
 Adds a `NSVisualEffectView` to the window with the specified properties.If you dont specify a `ResizeMask`, you have to use `UpdateView` or the `NSVisualEffectView` will be static.
 
 
-### `UpdateView(windowBuffer,options)` _macos_
+### `UpdateView(windowBuffer,options)` _macOS_
 
 Returns `Boolean`.
 
-* `windowBuffer` Buffer
+* `window` `BrowserWindow` instance
 * `options` Object
-  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.
-  * `ViewId`- Integer.Identifier of `NSVisualEffectView`.
-  * `Position` Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
-    * `x` - Integer
-    * `y` - Integer
-  * `Size` Size of the `NSVisualEffectView`. Should not be larger than the window.
-    * `width` - Integer
-    * `height` - Integer
+  * `ViewId` - Integer. Return value from `AddView`.
+  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.See `SetVibrancy` method for material properties.
+  * `X` X Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
+  * `Y` X Position of the `NSVisualEffectView` relative to the main `BrowserWindow`.
+  * `Width` - Integer Width of the `NSVisualEffectView`. Should not be larger than the window's.
+  * `Height` - Integer Height of the `NSVisualEffectView`. Should not be larger than the window's.
 
 Updates the `NSVisualEffectView` with the specified properties.
 
 
-### `RemoveView(windowBuffer,options)` _macos_
+### `RemoveView(window,options)` _macOS_
 
 Returns `Boolean`.
 
-* `windowBuffer` Buffer
+* `window` `BrowserWindow` instance
 * `options` Object
   * `ViewId`- Integer.Identifier of `NSVisualEffectView`.
 
@@ -110,8 +117,37 @@ electronVibrancy.SetVibrancy(true,browserWindowInstance.getNativeWindowHandle())
 // mainWindow with show: false
 mainWindow.on('ready-to-show',function() {
   var electronVibrancy = require('..');
-  electronVibrancy.SetVibrancy(true,mainWindow.getNativeWindowHandle());
-  mainWindow.show();
+  
+  // Whole window vibrancy with Material 0 and auto resize
+  electronVibrancy.SetVibrancy(mainWindow, 0);
+
+  // auto resizing vibrant view at {0,0} with size {300,300} with Material 0
+  electronVibrancy.AddView(mainWindow, { Width: 300,Height:300,X:0,Y:0,ResizeMask:2,Material:0 })
+
+  // non-resizing vibrant view at {0,0} with size {300,300} with Material 0
+  electronVibrancy.AddView(mainWindow, { Width: 300,Height:300,X:0,Y:0,ResizeMask:3,Material:0 })
+
+  //Remove a view
+  var viewId = electronVibrancy.SetVibrancy(mainWindow, 0);
+  electronVibrancy.RemoveView(mainWindow,viewId);
+
+  // Add a view then update it
+  var viewId = electronVibrancy.SetVibrancy(mainWindow, 0);
+  electronVibrancy.UpdateView(mainWindow,{ ViewId: viewId,Width: 600, Height: 600 });
+
+  // Multipe views with different materials
+  var viewId1 = electronVibrancy.AddView(mainWindow, { Width: 300,Height:300,X:0,Y:0,ResizeMask:3,Material:0 })
+  var viewId2 = electronVibrancy.AddView(mainWindow, { Width: 300,Height:300,X:300,Y:0,ResizeMask:3,Material:2 })
+
+  console.log(viewId1);
+  console.log(viewId2);
+
+  // electronVibrancy.RemoveView(mainWindow,0);
+  // electronVibrancy.RemoveView(mainWindow,1);
+
+  // or
+
+  electronVibrancy.DisableVibrancy(mainWindow);
 })
 
 ```

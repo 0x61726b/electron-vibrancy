@@ -36,11 +36,21 @@ namespace Vibrancy
 	void Vibrancy::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
 	{
 		v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SetVibrancy);
-		v8::Local<v8::ObjectTemplate> inst = tpl->InstanceTemplate();
-		//tpl->SetClassName(Nan::New("SetVibrancy").ToLocalChecked());
 		tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
+		v8::Local<v8::FunctionTemplate> tpl1 = Nan::New<v8::FunctionTemplate>(AddView);
+		tpl1->InstanceTemplate()->SetInternalFieldCount(1);
+
+		v8::Local<v8::FunctionTemplate> tpl2 = Nan::New<v8::FunctionTemplate>(UpdateView);
+		tpl2->InstanceTemplate()->SetInternalFieldCount(1);
+
+		v8::Local<v8::FunctionTemplate> tpl3 = Nan::New<v8::FunctionTemplate>(RemoveView);
+		tpl3->InstanceTemplate()->SetInternalFieldCount(1);
+
 		Nan::Set(target,Nan::New("SetVibrancy").ToLocalChecked(),Nan::GetFunction(tpl).ToLocalChecked());
+		Nan::Set(target,Nan::New("AddView").ToLocalChecked(),Nan::GetFunction(tpl1).ToLocalChecked());
+		Nan::Set(target,Nan::New("UpdateView").ToLocalChecked(),Nan::GetFunction(tpl2).ToLocalChecked());
+		Nan::Set(target,Nan::New("RemoveView").ToLocalChecked(),Nan::GetFunction(tpl3).ToLocalChecked());
 	}
 
 	NAN_METHOD(Vibrancy::SetVibrancy)
@@ -64,6 +74,62 @@ namespace Vibrancy
 			result = vibHelper_.DisableVibrancy((unsigned char*)bufferData);
 
 		info.GetReturnValue().Set(result);
+	}
 
+	NAN_METHOD(Vibrancy::AddView)
+	{
+		v8::Local<v8::Object> handleBuffer = info[0].As<v8::Object>();
+		v8::Local<v8::Array> options = info[1].As<v8::Array>();
+
+		v8::Isolate* isolate = info.GetIsolate();
+		v8::HandleScope scope(isolate);
+		
+	
+		char* bufferData = node::Buffer::Data(handleBuffer);
+
+		
+		int32_t result = -1;
+
+		result = vibHelper_.AddView((unsigned char*)bufferData,options);
+
+		info.GetReturnValue().Set(result);
+	}
+
+	NAN_METHOD(Vibrancy::UpdateView)
+	{
+		v8::Local<v8::Object> handleBuffer = info[0].As<v8::Object>();
+		v8::Local<v8::Array> options = info[1].As<v8::Array>();
+
+		v8::Isolate* isolate = info.GetIsolate();
+		v8::HandleScope scope(isolate);
+		
+	
+		char* bufferData = node::Buffer::Data(handleBuffer);
+
+		
+		bool result = false;
+
+		result = vibHelper_.UpdateView((unsigned char*)bufferData,options);
+
+		info.GetReturnValue().Set(result);
+	}
+
+	NAN_METHOD(Vibrancy::RemoveView)
+	{
+		v8::Local<v8::Object> handleBuffer = info[0].As<v8::Object>();
+		v8::Local<v8::Array> options = info[1].As<v8::Array>();
+
+		v8::Isolate* isolate = info.GetIsolate();
+		v8::HandleScope scope(isolate);
+		
+	
+		char* bufferData = node::Buffer::Data(handleBuffer);
+
+		
+		bool result = false;
+
+		result = vibHelper_.RemoveView((unsigned char*)bufferData,options);
+
+		info.GetReturnValue().Set(result);
 	}
 }

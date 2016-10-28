@@ -24,6 +24,8 @@
 #define __Common_h__
 //----------------------------------------------------------------------------
 #include <nan.h>
+#include <map>
+#include <utility>
 
 #define V8Value v8::Local<v8::Value>
 #define V8Array v8::Local<v8::Array>

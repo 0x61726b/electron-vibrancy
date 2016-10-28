@@ -49,17 +49,13 @@ namespace Vibrancy
 			};
 
 			ViewOptions GetOptions(v8::Local<v8::Array> options);
-			//For full-size auto resizable vibrancy
-			NSVisualEffectView* fullSizeVibrantView_;
 
-
-			//For individual views
-			int32_t AddView(unsigned char* buffer,v8::Local<v8::Array> options);
-			bool UpdateView(unsigned char* buffer,v8::Local<v8::Array> options);
-			bool RemoveView(unsigned char* buffer,v8::Local<v8::Array> options);
-
-			std::vector< NSVisualEffectView* > views_;
+			std::map<int, NSVisualEffectView* > views_;
 		#endif
+
+		int32_t AddView(unsigned char* buffer,v8::Local<v8::Array> options);
+		bool UpdateView(unsigned char* buffer,v8::Local<v8::Array> options);
+		bool RemoveView(unsigned char* buffer,v8::Local<v8::Array> options);
 	};
 
 }
