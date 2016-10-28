@@ -38,6 +38,8 @@ namespace Vibrancy
 		~Vibrancy();
 
 		static NAN_METHOD(SetVibrancy);
+
+		VibrancyHelper helper_;
 	};
 
 }

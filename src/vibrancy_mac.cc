@@ -23,9 +23,44 @@
 
 #include "VibrancyHelper.h"
 
+#import <CoreServices/CoreServices.h>
+#include <map>
+#include <utility>
+
+// NSVisualEffectMaterialAppearanceBased 10.10 - 0
+// NSVisualEffectMaterialLight 10.10 		   - 1
+// NSVisualEffectMaterialDark 10.10			   - 2
+// NSVisualEffectMaterialTitlebar 10.10		   - 3
+//
+// NSVisualEffectMaterialSelection 10.11	   - 4
+// NSVisualEffectMaterialMenu 10.11			   - 5
+// NSVisualEffectMaterialPopover			   - 6
+// NSVisualEffectMaterialSidebar 10.11		   - 7
+// NSVisualEffectMaterialMediumLight 10.11	   - 8
+// NSVisualEffectMaterialUltraDark 10.11	   - 9
+
+static std::map<int,std::string> materialIndexMap =
+{
+	std::make_pair(0,"NSVisualEffectMaterialAppearanceBased"),
+	std::make_pair(1,"NSVisualEffectMaterialLight"),
+	std::make_pair(2,"NSVisualEffectMaterialDark"),
+	std::make_pair(3,"NSVisualEffectMaterialTitlebar"),
+	std::make_pair(8,"NSVisualEffectMaterialMediumLight"),
+	std::make_pair(5,"NSVisualEffectMaterialMenu"),
+	std::make_pair(6,"NSVisualEffectMaterialPopover"),
+	std::make_pair(7,"NSVisualEffectMaterialSidebar"),
+	std::make_pair(9,"NSVisualEffectMaterialUltraDark"),
+	std::make_pair(4,"NSVisualEffectMaterialSelection")
+};
+
 
 namespace Vibrancy
 {
+	bool IsHigherThanYosemite()
+	{
+		NSOperatingSystemVersion operatingSystemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
+		return operatingSystemVersion.majorVersion == 10 && operatingSystemVersion.minorVersion > 10;
+	}
 	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
 	{
 		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
@@ -34,9 +69,9 @@ namespace Vibrancy
 		NSLog(@"%@",NSStringFromRect(rect)); //To verify the bounds
 
 		
-		vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
- 		[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
- 		[vibrantView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
+		fullSizeVibrantView_ = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
+ 		[fullSizeVibrantView_ setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+ 		[fullSizeVibrantView_ setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
 
  		if(options->Length() > 0)
  		{
@@ -46,9 +81,13 @@ namespace Vibrancy
 	 		{
 	 			int materialNumber = vMaterial->Int32Value();
 
-		 		if(materialNumber >= 0 && materialNumber <= 14) // would crash if you give anything other than those specified here https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc
+		 		if(materialNumber >= 0 && materialNumber <= 9) // would crash if you give anything other than those specified here https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc
 		 		{
-		 			[vibrantView setMaterial:(NSVisualEffectMaterial)materialNumber];
+		 			if(materialNumber > 3 && !IsHigherThanYosemite())
+		 			{
+		 				return false;
+		 			}
+		 			[fullSizeVibrantView_ setMaterial:(NSVisualEffectMaterial)materialNumber];
 		 		}
 	 		}
 
@@ -59,11 +98,14 @@ namespace Vibrancy
 	 		{
 	 			double alphaNumber = vAlpha->NumberValue();
 	 			//[vibrantView setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.1]];
-	 			vibrantView.alphaValue = alphaNumber;
+	 			fullSizeVibrantView_.alphaValue = alphaNumber;
 	 		}
  		}
 
- 		[view addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
+ 		//[view addSubview:fullSizeVibrantView_ positioned:NSWindowBelow relativeTo:nil];
+ 		[view.window.contentView addSubview:fullSizeVibrantView_ positioned:NSWindowBelow relativeTo:nil];
+
+ 		views_.push_back(fullSizeVibrantView_);
 
 		return true;
 	}
@@ -72,20 +114,26 @@ namespace Vibrancy
 	{
 		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
 
-		if(views_.size())
+		NSLog(@"Disabling Vibrancy - View count %i",views_.size());
+
+		if(views_.size() > 0)
 		{
+			NSLog(@"Disabling Vibrancy - View count %i",views_.size());
+
+			NSView* contentView = (NSView*)view.window.contentView;
 			for(int i=0; i < views_.size();++i)
 			{
-				[[[view subviews] objectAtIndex:i] removeFromSuperview];		
+				NSView* viewToRemove = [[contentView subviews] objectAtIndex:i];
+				NSLog(@"Removing subview %i %@",i,viewToRemove);
+				[viewToRemove removeFromSuperview];
 			}
 		}
-		//[[[view subviews] objectAtIndex:0] removeFromSuperview];
 		return true;
 	}
 
-	ViewOptions VibrancyHelper::GetOptions(v8::Local<v8::Array> options)
-	{
-		ViewOptions viewOptions;
+	VibrancyHelper::ViewOptions VibrancyHelper::GetOptions(v8::Local<v8::Array> options)
+	{		
+		VibrancyHelper::ViewOptions viewOptions;
 		viewOptions.ResizeMask = 2; // auto width,height resize
 		viewOptions.Width = 0;
 		viewOptions.Height = 0;
@@ -96,8 +144,8 @@ namespace Vibrancy
 
 		if(options->Length() > 0)
 		{
-			V8Value vPosition = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Position"));// { x,y }
-			V8Value vSize = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Size")); // { width,height }
+			V8Array vPosition = v8::Local<v8::Array>::Cast(options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Position")));// { x,y }
+			V8Array vSize = v8::Local<v8::Array>::Cast(options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Size"))); // { width,height }
 			V8Value vAutoResizeMask = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ResizeMask")); // //Integer width = 0,height = 1,both = 2,off = 3
 			V8Value vViewId = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));
 			V8Value vMaterial = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Material"));
@@ -125,7 +173,7 @@ namespace Vibrancy
 			{
 				// Position
 				V8Value vX = vPosition->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "x"));// Integer
-				V8Value vY = vPosition->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "y"));// IntegerFactory
+				V8Value vY = vPosition->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "y"));// Integer
 
 				if(vX->IsInt32())
 					viewOptions.X = vX->Int32Value();
@@ -136,7 +184,7 @@ namespace Vibrancy
 
 			if(!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
 			{
-				resizeMask = vAutoResizeMask->Int32Value();
+				viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
 			}
 		}
 		return viewOptions;
@@ -153,7 +201,7 @@ namespace Vibrancy
 
 		NSRect rect = [[view window] frame];
 
-		ViewOptions viewOptions = GetViewOptions(options);
+		ViewOptions viewOptions = GetOptions(options);
 		
 
 		NSVisualEffectView* vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(viewOptions.X, viewOptions.Y, viewOptions.Width, viewOptions.Height)];
@@ -177,7 +225,7 @@ namespace Vibrancy
 	{
 		NSView* view = *reinterpret_cast<NSView**>(buffer);
 
-		ViewOptions viewOptions = GetViewOptions(options);
+		ViewOptions viewOptions = GetOptions(options);
 
 		if(viewOptions.ViewId == -1)
 			return false;

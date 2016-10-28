@@ -26,6 +26,7 @@
 #include <nan.h>
 
 #define V8Value v8::Local<v8::Value>
+#define V8Array v8::Local<v8::Array>
 
 #if defined(_MSC_VER)
 #define PLATFORM_WIN32

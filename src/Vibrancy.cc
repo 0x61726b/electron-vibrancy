@@ -24,6 +24,7 @@
 //----------------------------------------------------------------------------
 namespace Vibrancy
 {
+	static VibrancyHelper vibHelper_;
 	Vibrancy::Vibrancy()
 	{
 	}
@@ -36,6 +37,7 @@ namespace Vibrancy
 	{
 		v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SetVibrancy);
 		v8::Local<v8::ObjectTemplate> inst = tpl->InstanceTemplate();
+		//tpl->SetClassName(Nan::New("SetVibrancy").ToLocalChecked());
 		tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 		Nan::Set(target,Nan::New("SetVibrancy").ToLocalChecked(),Nan::GetFunction(tpl).ToLocalChecked());
@@ -56,11 +58,10 @@ namespace Vibrancy
 		char* bufferData = node::Buffer::Data(handleBuffer);
 
 		bool result = false;
-		VibrancyHelper helper;
 		if(toggleState)
-			result = helper.EnableVibrancy((unsigned char*)bufferData,options);
+			result = vibHelper_.EnableVibrancy((unsigned char*)bufferData,options);
 		else
-			result = helper.DisableVibrancy((unsigned char*)bufferData);
+			result = vibHelper_.DisableVibrancy((unsigned char*)bufferData);
 
 		info.GetReturnValue().Set(result);
 

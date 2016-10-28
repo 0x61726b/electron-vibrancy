@@ -42,7 +42,7 @@
             },
             "xcode_settings": {
                 "OTHER_CFLAGS": [
-                    "-x objective-c++"
+                    "-x objective-c++ -stdlib=libc++"
                 ]
             },
             "variables":{

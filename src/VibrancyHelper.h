@@ -45,6 +45,7 @@ namespace Vibrancy
 				int Height;
 				int X;
 				int Y;
+				int Material;
 			};
 
 			ViewOptions GetOptions(v8::Local<v8::Array> options);

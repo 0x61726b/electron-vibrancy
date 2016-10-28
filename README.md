@@ -33,7 +33,17 @@ There are several methods depending on what you want to do and what platform you
 * `state` Boolean
 * `windowBuffer` Buffer
 * `options` Object
-  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.`0`: AppearanceBased,`1`: Light,`2`: Dark,`3`: Titlebar,`4`: Selection.
+  * `Material` - Integer. The Material for `NSVisualEffectMaterial`.
+  	* `0` - NSVisualEffectMaterialAppearanceBased *10.10+*
+  	* `1` - NSVisualEffectMaterialLight *10.10+*
+  	* `2` - NSVisualEffectMaterialDark *10.10+*
+  	* `3` - NSVisualEffectMaterialTitlebar *10.10+*
+  	* `4` - NSVisualEffectMaterialSelection *10.11+*
+  	* `5` - NSVisualEffectMaterialMenu *10.11+*
+  	* `6` - NSVisualEffectMaterialPopover *10.11+*
+  	* `7` - NSVisualEffectMaterialSidebar *10.11+*
+  	* `8` - NSVisualEffectMaterialMediumLight *10.11+*
+  	* `9` - NSVisualEffectMaterialUltraDark *10.11+*
 
 Enables or disables vibrancy for the **WHOLE** window. It will resize automatically. If you want something custom, see `AddView`.
 See [here](https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc) for more info about `NSVisualEffectMaterial`.

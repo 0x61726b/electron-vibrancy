@@ -23,7 +23,13 @@ app.on('ready', function () {
       console.log(vib);
 
       mainWindow.show();
-      mainWindow.openDevTools();
+      mainWindow.openDevTools({detach: true});
+
+      // function removeVibrancy() {
+      //   electronVibrancy.SetVibrancy(false,nativeHandleBuffer);
+      //   console.log("removed");
+      // }
+      // setTimeout(removeVibrancy,3000);
 
       //Windows8.1 hack
       //mainWindow.minimize();
