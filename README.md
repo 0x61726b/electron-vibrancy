@@ -7,18 +7,25 @@ This module is intended to give an [Electron](https://github.com/electron/electr
 
 # Running
 
-Since this is a native addon, you will need your platforms build tools. Visual Studio,XCode etc.
+Since this is a native addon, you will need your platforms build tools. Visual Studio,XCode etc.Also Python for `node-gyp`.
+
 ```
 npm install
 npm test
 ```
 
-```npm install``` will compile the addon for Electron ```1.4.2```, if you are using different version, change the electron version at ```package.json``` scripts.
+To rebuild again:
+
+```
+npm run conf
+npm run rebuild
+```
 
 
 # Things to note
 - Window must be transparent.
 - You can only blur the whole window, therefore only blurring behind a single element isnt possible.
+- But it is possible to add individual views using `AddView` API on **macOS**.
 - If your window has a frame, the frame will also be blurred.
 - Requires Yosemite on macOS.
 - On Windows 8.x, this wont work because Microsoft completely removed Aero Glass feature. It is still possible though but it is not something that an end user should do.
@@ -30,7 +37,7 @@ There are several methods depending on what you want to do and what platform you
 
 ### `SetVibrancy(window, material)` _win_ , _macOS_
 
-Returns `Integer`.View id of `NSVisualEffectView`. You need this for `UpdateView` or `RemoveView`.
+Returns `Integer`.View id of `NSVisualEffectView`. You need this for `UpdateView` or `RemoveView`. `material` has no effect on Windows.
 
 * `window` `BrowserWindow` instance
 * `Material` - Integer. The Material for `NSVisualEffectMaterial`.
@@ -73,10 +80,10 @@ Returns `Integer`.View id of `NSVisualEffectView`. You need this for `UpdateView
     * `2` - Auto width-height resize
     * `3` - No resize
 
-Adds a `NSVisualEffectView` to the window with the specified properties.If you dont specify a `ResizeMask`, you have to use `UpdateView` or the `NSVisualEffectView` will be static.
+Adds a `NSVisualEffectView` to the window with the specified properties.If you dont specify a `ResizeMask`,default value for it is `2`.
 
 
-### `UpdateView(windowBuffer,options)` _macOS_
+### `UpdateView(window,options)` _macOS_
 
 Returns `Boolean`.
 
@@ -158,16 +165,8 @@ mainWindow.on('ready-to-show',function() {
 ### Windows
 On **Windows 10** the addon uses ```SetWindowCompositionAttribute```, which is an undocumented API, which means it can be changed by Microsoft any time and break the functionality.
 
-On **Windows 8.x**, Aero Glass or any other blurring feature is removed by Microsoft.But you can use [Aero Glass](http://www.glass8.eu/) to enable it again. If you install it, the addon calls
-`DwmEnableBlurBehindWindow` and the window will blend with whats behind.
-
-![](http://i.imgur.com/4gpkRm5.jpg)
-
 ### MacOS
-Requires Yosemite and above.
-
-### Linux
-Soon™
+Requires Yosemite and above.Some materials require 10.11+.
 
 
 ## License
