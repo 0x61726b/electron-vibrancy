@@ -12,6 +12,8 @@ This module is intended to give an [Electron](https://github.com/electron/electr
 Since this is a native addon, you will need your platforms build tools. Visual Studio,XCode etc.Also Python for `node-gyp`.
 
 ```
+git clone https://github.com/arkenthera/electron-vibrancy
+cd electron-vibrancy
 npm install
 npm test
 ```
@@ -23,6 +25,11 @@ npm run conf
 npm run rebuild
 ```
 
+Also available through NPM.
+
+```
+npm install electron-vibrancy
+```
 
 # Things to note
 - Window must be transparent.
