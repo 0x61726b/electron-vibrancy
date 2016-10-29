@@ -1,11 +1,11 @@
 #electron-vibrancy
 
 [![Build Status](https://travis-ci.org/arkenthera/electron-vibrancy.svg?branch=master)](https://travis-ci.org/arkenthera/electron-vibrancy)
+[![Build status](https://ci.appveyor.com/api/projects/status/41na3l88kgs8wir1?svg=true)](https://ci.appveyor.com/project/arkenthera/electron-vibrancy)
 
 This module is intended to give an [Electron](https://github.com/electron/electron) BrowserWindow blur on its behind. This isnt supported on Electron and this module uses native API calls to achieve the effect.
 
 ![](http://i.imgur.com/0sRPzpn.png)
-
 
 # Running
 
