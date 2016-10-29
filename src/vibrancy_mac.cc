@@ -38,19 +38,19 @@
 // NSVisualEffectMaterialMediumLight 10.11	   - 8
 // NSVisualEffectMaterialUltraDark 10.11	   - 9
 
-static std::map<int,std::string> materialIndexMap =
-{
-	std::make_pair(0,"NSVisualEffectMaterialAppearanceBased"),
-	std::make_pair(1,"NSVisualEffectMaterialLight"),
-	std::make_pair(2,"NSVisualEffectMaterialDark"),
-	std::make_pair(3,"NSVisualEffectMaterialTitlebar"),
-	std::make_pair(8,"NSVisualEffectMaterialMediumLight"),
-	std::make_pair(5,"NSVisualEffectMaterialMenu"),
-	std::make_pair(6,"NSVisualEffectMaterialPopover"),
-	std::make_pair(7,"NSVisualEffectMaterialSidebar"),
-	std::make_pair(9,"NSVisualEffectMaterialUltraDark"),
-	std::make_pair(4,"NSVisualEffectMaterialSelection")
-};
+// static std::map<int,std::string> materialIndexMap =
+// {
+// 	std::make_pair(0,"NSVisualEffectMaterialAppearanceBased"),
+// 	std::make_pair(1,"NSVisualEffectMaterialLight"),
+// 	std::make_pair(2,"NSVisualEffectMaterialDark"),
+// 	std::make_pair(3,"NSVisualEffectMaterialTitlebar"),
+// 	std::make_pair(8,"NSVisualEffectMaterialMediumLight"),
+// 	std::make_pair(5,"NSVisualEffectMaterialMenu"),
+// 	std::make_pair(6,"NSVisualEffectMaterialPopover"),
+// 	std::make_pair(7,"NSVisualEffectMaterialSidebar"),
+// 	std::make_pair(9,"NSVisualEffectMaterialUltraDark"),
+// 	std::make_pair(4,"NSVisualEffectMaterialSelection")
+// };
 
 
 namespace Vibrancy
@@ -62,57 +62,17 @@ namespace Vibrancy
 	}
 	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
 	{
-		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
-
-		NSRect rect = [[view window] frame];
-		NSLog(@"%@",NSStringFromRect(rect)); //To verify the bounds
-
-		
-		NSVisualEffectView* vibrantView = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height)];
- 		[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
- 		[vibrantView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
-
- 		if(options->Length() > 0)
- 		{
- 			// Options
-	 		V8Value vMaterial = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Material"));
-	 		if(!vMaterial->IsNull() && vMaterial->IsInt32())
-	 		{
-	 			int materialNumber = vMaterial->Int32Value();
-
-		 		if(materialNumber >= 0 && materialNumber <= 9) // would crash if you give anything other than those specified here https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc
-		 		{
-		 			if(materialNumber > 3 && !IsHigherThanYosemite())
-		 			{
-		 				return false;
-		 			}
-		 			[vibrantView setMaterial:(NSVisualEffectMaterial)materialNumber];
-		 		}
-	 		}
- 		}
-
- 		//[view addSubview:fullSizeVibrantView_ positioned:NSWindowBelow relativeTo:nil];
- 		[view.window.contentView addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
-
- 		int l = views_.size();
- 		views_.insert(std::make_pair(l,vibrantView));
-
-		return true;
+		//See AddView
+		return false;
 	}
 
 	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
 	{
-		NSView* view = *reinterpret_cast<NSView**>(windowHandleBuffer);
-
 		if(views_.size() > 0)
 		{
-			NSLog(@"Disabling Vibrancy - View count %i",views_.size());
-
-			NSView* contentView = (NSView*)view.window.contentView;
-			for(int i=0; i < views_.size();++i)
+			for(size_t i=0; i < views_.size();++i)
 			{
 				NSView* viewToRemove = views_[i];
-				NSLog(@"Removing subview %i %@",i,viewToRemove);
 				[viewToRemove removeFromSuperview];
 			}
 
@@ -278,8 +238,6 @@ namespace Vibrancy
 	
 	bool VibrancyHelper::RemoveView(unsigned char* buffer,v8::Local<v8::Array> options)
 	{
-		NSView* view = *reinterpret_cast<NSView**>(buffer);
-
 		bool result = false;
 		V8Value vView = options->Get(v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));// Integer
 
@@ -288,7 +246,7 @@ namespace Vibrancy
 
 		int viewId = vView->Int32Value();
 
-		if(viewId == -1 || viewId > views_.size())
+		if(viewId == -1 || viewId > (int)views_.size())
 			return result;
 
 		std::map<int,NSVisualEffectView*>::iterator It = views_.find(viewId);
@@ -303,9 +261,7 @@ namespace Vibrancy
 
 		views_.erase(viewId);
 
-		NSView* contentView = (NSView*)view.window.contentView;
 		NSView* viewToRemove = vibrantView;
-		NSLog(@"Removing subview %i %@",viewId,viewToRemove);
 		[viewToRemove removeFromSuperview];
 
 		return true;
