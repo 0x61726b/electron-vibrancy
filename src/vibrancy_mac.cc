@@ -221,8 +221,16 @@ namespace Vibrancy
 			[vibrantView setAutoresizingMask:NSViewHeightSizable];
 		if(viewOptions.ResizeMask == 2)
 			[vibrantView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+		
 
-		[vibrantView setMaterial:(NSVisualEffectMaterial)viewOptions.Material];
+		if(viewOptions.Material >= 0 && viewOptions.Material <= 9) // would crash if you give anything other than those specified here https://developer.apple.com/reference/appkit/nsvisualeffectmaterial?language=objc
+		{
+			if(viewOptions.Material > 3 && !IsHigherThanYosemite())
+			{
+		 		return -1;
+		 	}
+			[vibrantView setMaterial:(NSVisualEffectMaterial)viewOptions.Material];
+		}
 
 		[view.window.contentView addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
 

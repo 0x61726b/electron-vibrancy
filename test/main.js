@@ -49,7 +49,7 @@ app.on('ready', function () {
 
     // // or
 
-    // electronVibrancy.DisableVibrancy(mainWindow);
+    //electronVibrancy.DisableVibrancy(mainWindow);
 
     mainWindow.show();
 

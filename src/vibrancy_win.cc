@@ -118,4 +118,19 @@ namespace Vibrancy
 		HWND hwnd = (HWND)handle;
 		return SetBlurBehind(hwnd, false);
 	}
+
+	// These are here so compiling doesnt fail.
+	int32_t VibrancyHelper::AddView(unsigned char* buffer,v8::Local<v8::Array> options)
+	{
+		EnableVibrancy(buffer,options);
+		return -1;
+	}
+	bool VibrancyHelper::UpdateView(unsigned char* buffer,v8::Local<v8::Array> options)
+	{
+		return false;
+	}
+	bool VibrancyHelper::RemoveView(unsigned char* buffer,v8::Local<v8::Array> options)
+	{
+		return false;
+	}
 }

@@ -1,0 +1,24 @@
+os:
+  - osx
+  - linux
+
+branches:
+  only:
+    - master
+
+env:
+  - NODE_VERSION="6.6.0"
+
+install:
+  - chmod a+x ./travis-build.sh
+
+script:
+  - ./travis-build.sh
+
+
+
+notifications:
+  email:
+    recipients: arkenthera@gmail.com
+  on_success: always
+  on_failure: always
