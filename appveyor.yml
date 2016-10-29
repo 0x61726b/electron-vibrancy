@@ -1,0 +1,13 @@
+environment:
+  nodejs_version: "6" # 7 not yet supported
+platform:
+  - x86
+  - x64
+install:
+  # Get the latest stable version of Node.js
+  - ps: Install-Product node $env:nodejs_version $env:platform
+test_script:
+  - node --version
+  - npm --version
+  - npm install
+build: off # Required to make appveyor behave
