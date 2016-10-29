@@ -7,7 +7,7 @@ branches:
     - dev
 
 env:
-  - NODE_VERSION="6.6.0"
+  - NODE_VERSION="7.0.0"
 
 install:
   - chmod a+x ./travis-build.sh
