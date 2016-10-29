@@ -10,9 +10,7 @@
     "node-pre-gyp": "^0.6.19"
   },
   "dependencies": {
-    "async": "^1.5.2",
-    "bindings": "^1.2.1",
-    "node-inspector": "^0.12.5"
+    "bindings": "^1.2.1"
   },
   "scripts": {
     "test": "./node_modules/.bin/electron test/main.js",
