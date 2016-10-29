@@ -1,6 +1,5 @@
 os:
   - osx
-  - linux
 
 branches:
   only:
