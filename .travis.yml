@@ -4,6 +4,7 @@ os:
 branches:
   only:
     - master
+    - dev
 
 env:
   - NODE_VERSION="6.6.0"
