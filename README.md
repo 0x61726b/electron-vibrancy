@@ -7,6 +7,8 @@ This module is intended to give an [Electron](https://github.com/electron/electr
 
 ![](http://i.imgur.com/0sRPzpn.png)
 
+![](http://i.imgur.com/42jOnRV.png)
+
 # Running
 
 Since this is a native addon, you will need your platforms build tools. Visual Studio,XCode etc.Also Python for `node-gyp`.
@@ -167,6 +169,15 @@ mainWindow.on('ready-to-show',function() {
 })
 
 ```
+
+
+## Screenshots
+
+![](https://cloud.githubusercontent.com/assets/174864/19833319/bc7214f8-9e0b-11e6-8331-be49ca3eeab9.png)
+
+![](https://cloud.githubusercontent.com/assets/174864/19833322/bc7f168a-9e0b-11e6-9c84-c2a746538edc.png)
+
+![](https://cloud.githubusercontent.com/assets/174864/19833327/bc8b2c2c-9e0b-11e6-9272-8d84ad3b7116.png)
 
 
 ## Platform notices
