@@ -35,7 +35,7 @@ npm install electron-vibrancy
 
 # Current Supported Platforms
 - macOS 10.10+
-- Windows 10 (stable)
+- Windows 10 (stable) It just works ™
 - Windows 8.x (stable + requires modifications)
 - Windows 7 (unstable + requires modifications)
 
