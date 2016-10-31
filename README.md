@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/arkenthera/electron-vibrancy.svg?branch=master)](https://travis-ci.org/arkenthera/electron-vibrancy)
 [![Build status](https://ci.appveyor.com/api/projects/status/41na3l88kgs8wir1?svg=true)](https://ci.appveyor.com/project/arkenthera/electron-vibrancy)
 
-This module is intended to give an [Electron](https://github.com/electron/electron) BrowserWindow blur on its behind. This isnt supported on Electron and this module uses native API calls to achieve the effect.
+This module is intended to give an [Electron](https://github.com/electron/electron) BrowserWindow blur on its behind. Electron does not support 'blur behind' from a transparent window and this module uses native API calls to achieve the effect.
 
 ![](http://i.imgur.com/0sRPzpn.png)
 
@@ -32,6 +32,12 @@ Also available through NPM.
 ```
 npm install electron-vibrancy
 ```
+
+# Current Supported Platforms
+- macOS 10.10+
+- Windows 10 (stable)
+- Windows 8.x (stable + requires modifications)
+- Windows 7 (unstable + requires modifications)
 
 # Things to note
 - Window must be transparent.
