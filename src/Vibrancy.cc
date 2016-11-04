@@ -57,20 +57,23 @@ namespace Vibrancy
 	{
 		v8::Local<v8::Object> toggleStateObj = info[0].As<v8::Object>();
 		v8::Local<v8::Object> handleBuffer = info[1].As<v8::Object>();
-		v8::Local<v8::Array> options = info[2].As<v8::Array>();
 
 		v8::Isolate* isolate = info.GetIsolate();
 		v8::HandleScope scope(isolate);
 
+		if(toggleStateObj->IsNull())
+			return;
+		
+		if(handleBuffer->IsNull())
+			return;
+
 		bool toggleState = toggleStateObj->BooleanValue();
 		
-	
 		char* bufferData = node::Buffer::Data(handleBuffer);
 
 		bool result = false;
-		if(toggleState)
-			result = vibHelper_.EnableVibrancy((unsigned char*)bufferData,options);
-		else
+
+		if(!toggleState)
 			result = vibHelper_.DisableVibrancy((unsigned char*)bufferData);
 
 		info.GetReturnValue().Set(result);
