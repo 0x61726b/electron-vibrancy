@@ -30,10 +30,9 @@ namespace Vibrancy
 	class VibrancyHelper
 	{
 	public:
-		VibrancyHelper() { };
+		VibrancyHelper();
 		~VibrancyHelper() { };
 
-		bool EnableVibrancy(unsigned char* buffer,v8::Local<v8::Array> options);
 		bool DisableVibrancy(unsigned char* buffer);
 
 		#ifdef PLATFORM_OSX
@@ -51,6 +50,7 @@ namespace Vibrancy
 			ViewOptions GetOptions(v8::Local<v8::Array> options);
 
 			std::map<int, NSVisualEffectView* > views_;
+			int viewIndex_;
 		#endif
 
 		int32_t AddView(unsigned char* buffer,v8::Local<v8::Array> options);

@@ -60,91 +60,10 @@ namespace Vibrancy
 		NSOperatingSystemVersion operatingSystemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
 		return operatingSystemVersion.majorVersion == 10 && operatingSystemVersion.minorVersion > 10;
 	}
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
+
+	VibrancyHelper::VibrancyHelper() : viewIndex_(0)
 	{
-		//See AddView
-		return false;
-	}
 
-	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
-	{
-		if(views_.size() > 0)
-		{
-			for(size_t i=0; i < views_.size();++i)
-			{
-				NSView* viewToRemove = views_[i];
-				[viewToRemove removeFromSuperview];
-			}
-
-			views_.clear();
-		}
-		return true;
-	}
-
-	VibrancyHelper::ViewOptions VibrancyHelper::GetOptions(v8::Local<v8::Array> options)
-	{		
-		VibrancyHelper::ViewOptions viewOptions;
-		viewOptions.ResizeMask = 2; // auto width,height resize
-		viewOptions.Width = 0;
-		viewOptions.Height = 0;
-		viewOptions.X = 0;
-		viewOptions.Y = 0;
-		viewOptions.ViewId = -1; 
-		viewOptions.Material = 0;
-
-		v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
-		V8Value vPosition = options->Get(v8::String::NewFromUtf8(isolate, "Position"));
-		V8Value vSize = options->Get(v8::String::NewFromUtf8(isolate,"Size"));
-
-		V8Value vAutoResizeMask = options->Get(v8::String::NewFromUtf8(isolate, "ResizeMask")); // //Integer width = 0,height = 1,both = 2,off = 3
-		V8Value vViewId = options->Get(v8::String::NewFromUtf8(isolate, "ViewId"));
-		V8Value vMaterial = options->Get(v8::String::NewFromUtf8(isolate,"Material"));
-
-		if(!vMaterial->IsNull() && vMaterial->IsInt32())
-		{
-			viewOptions.Material = vMaterial->Int32Value();
-		}
-
-		if(!vViewId->IsNull() && vViewId->IsInt32())
-			viewOptions.ViewId = vViewId->Int32Value();
-		
-
-		if(!vSize->IsUndefined() && !vSize->IsNull())
-		{
-			V8Array vaSize = v8::Local<v8::Array>::Cast(vSize); // { width,height }
-			// Size
-			V8Value vWidth = vaSize->Get(v8::String::NewFromUtf8(isolate, "width"));// Integer
-			V8Value vHeight = vaSize->Get(v8::String::NewFromUtf8(isolate,"height"));// Integer
-
-			if(!vWidth->IsNull() && vWidth->IsInt32())
-				viewOptions.Width = vWidth->Int32Value();
-
-			if(!vHeight->IsNull() && vHeight->IsInt32())
-				viewOptions.Height = vHeight->Int32Value();
-		}
-
-		if(!vPosition->IsUndefined() && !vPosition->IsNull())
-		{
-			V8Array vaPosition = v8::Local<v8::Array>::Cast(vPosition);// { x,y }
-			// Position
-			V8Value vX = vaPosition->Get(v8::String::NewFromUtf8(isolate, "x"));// Integer
-			V8Value vY = vaPosition->Get(v8::String::NewFromUtf8(isolate, "y"));// Integer
-
-			if(!vX->IsNull() && vX->IsInt32())
-				viewOptions.X = vX->Int32Value();
-
-			if(!vY->IsNull() && vY->IsInt32())
-				viewOptions.Y = vY->Int32Value();
-		}
-
-		if(!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
-		{
-			viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
-		}
-
-		NSLog(@"X:%i Y:%i W:%i H:%i Resize:%i Mat:%i ViewId: %i",viewOptions.X,viewOptions.Y,viewOptions.Width,viewOptions.Height, viewOptions.ResizeMask,viewOptions.Material,viewOptions.ViewId);
-		return viewOptions;
 	}
 
 	int32_t VibrancyHelper::AddView(unsigned char* buffer,v8::Local<v8::Array> options)
@@ -194,8 +113,9 @@ namespace Vibrancy
 
 		[view.window.contentView addSubview:vibrantView positioned:NSWindowBelow relativeTo:nil];
 
-		viewId = views_.size();
+		viewId = viewIndex_;
  		views_.insert(std::make_pair(viewId,vibrantView));
+		viewIndex_++;
 		return viewId;
 	}
 	bool VibrancyHelper::UpdateView(unsigned char* buffer,v8::Local<v8::Array> options)
@@ -264,6 +184,93 @@ namespace Vibrancy
 		NSView* viewToRemove = vibrantView;
 		[viewToRemove removeFromSuperview];
 
+		return true;
+	}
+
+	VibrancyHelper::ViewOptions VibrancyHelper::GetOptions(v8::Local<v8::Array> options)
+	{		
+		VibrancyHelper::ViewOptions viewOptions;
+		viewOptions.ResizeMask = 2; // auto width,height resize
+		viewOptions.Width = 0;
+		viewOptions.Height = 0;
+		viewOptions.X = 0;
+		viewOptions.Y = 0;
+		viewOptions.ViewId = -1; 
+		viewOptions.Material = 0;
+
+		v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+		V8Value vPosition = options->Get(v8::String::NewFromUtf8(isolate, "Position"));
+		V8Value vSize = options->Get(v8::String::NewFromUtf8(isolate,"Size"));
+
+		V8Value vAutoResizeMask = options->Get(v8::String::NewFromUtf8(isolate, "ResizeMask")); // //Integer width = 0,height = 1,both = 2,off = 3
+		V8Value vViewId = options->Get(v8::String::NewFromUtf8(isolate, "ViewId"));
+		V8Value vMaterial = options->Get(v8::String::NewFromUtf8(isolate,"Material"));
+
+		if(!vMaterial->IsNull() && vMaterial->IsInt32())
+		{
+			viewOptions.Material = vMaterial->Int32Value();
+		}
+
+		if(!vViewId->IsNull() && vViewId->IsInt32())
+			viewOptions.ViewId = vViewId->Int32Value();
+		
+
+		if(!vSize->IsUndefined() && !vSize->IsNull())
+		{
+			V8Array vaSize = v8::Local<v8::Array>::Cast(vSize); // { width,height }
+			// Size
+			V8Value vWidth = vaSize->Get(v8::String::NewFromUtf8(isolate, "width"));// Integer
+			V8Value vHeight = vaSize->Get(v8::String::NewFromUtf8(isolate,"height"));// Integer
+
+			if(!vWidth->IsNull() && vWidth->IsInt32())
+				viewOptions.Width = vWidth->Int32Value();
+
+			if(!vHeight->IsNull() && vHeight->IsInt32())
+				viewOptions.Height = vHeight->Int32Value();
+		}
+
+		if(!vPosition->IsUndefined() && !vPosition->IsNull())
+		{
+			V8Array vaPosition = v8::Local<v8::Array>::Cast(vPosition);// { x,y }
+			// Position
+			V8Value vX = vaPosition->Get(v8::String::NewFromUtf8(isolate, "x"));// Integer
+			V8Value vY = vaPosition->Get(v8::String::NewFromUtf8(isolate, "y"));// Integer
+
+			if(!vX->IsNull() && vX->IsInt32())
+				viewOptions.X = vX->Int32Value();
+
+			if(!vY->IsNull() && vY->IsInt32())
+				viewOptions.Y = vY->Int32Value();
+		}
+
+		if(!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
+		{
+			viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
+		}
+
+		//NSLog(@"X:%i Y:%i W:%i H:%i Resize:%i Mat:%i ViewId: %i",viewOptions.X,viewOptions.Y,viewOptions.Width,viewOptions.Height, viewOptions.ResizeMask,viewOptions.Material,viewOptions.ViewId);
+		return viewOptions;
+	}
+
+	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
+	{
+		//See AddView
+		return false;
+	}
+
+	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
+	{
+		if(views_.size() > 0)
+		{
+			for(size_t i=0; i < views_.size();++i)
+			{
+				NSView* viewToRemove = views_[i];
+				[viewToRemove removeFromSuperview];
+			}
+
+			views_.clear();
+		}
 		return true;
 	}
 }

@@ -2,10 +2,15 @@
 
 [![Build Status](https://travis-ci.org/arkenthera/electron-vibrancy.svg?branch=master)](https://travis-ci.org/arkenthera/electron-vibrancy)
 [![Build status](https://ci.appveyor.com/api/projects/status/41na3l88kgs8wir1?svg=true)](https://ci.appveyor.com/project/arkenthera/electron-vibrancy)
+[![npm version](https://badge.fury.io/js/electron-vibrancy.svg)](https://badge.fury.io/js/electron-vibrancy)
+![](https://img.shields.io/npm/dm/electron-vibrancy.svg)
+![](https://david-dm.org/arkenthera/electron-vibrancy/status.svg)
 
 This module is intended to give an [Electron](https://github.com/electron/electron) BrowserWindow blur on its behind. This isnt supported on Electron and this module uses native API calls to achieve the effect.
 
 ![](http://i.imgur.com/0sRPzpn.png)
+
+![](http://i.imgur.com/42jOnRV.png)
 
 # Running
 
@@ -32,14 +37,13 @@ npm install electron-vibrancy
 ```
 
 # Things to note
-- Window must be transparent.
-- You can only blur the whole window, therefore only blurring behind a single element isnt possible.
-- But it is possible to add individual views using `AddView` API on **macOS**.
-- If your window has a frame, the frame will also be blurred.
+- `BrowserWindow` must be transparent. (`transparent:true`)
 - Requires Yosemite on macOS.
 - On Windows 8.x, this wont work because Microsoft completely removed Aero Glass feature. It is still possible though but it is not something that an end user should do.
 See Platforms section for more info.
-- It is known that **Dev Tools attached to the window** *sometimes* breaks transparency, it is not related to this module.
+- On Windows 7, an Aero theme must be activated.
+
+Although it works, I dont recommend using this module on a machine below Windows 10. See platforms section below for more information for macOS.
 
 # API
 There are several methods depending on what you want to do and what platform you are on.
@@ -169,13 +173,23 @@ mainWindow.on('ready-to-show',function() {
 ```
 
 
+## Screenshots
+
+![](https://cloud.githubusercontent.com/assets/174864/19833319/bc7214f8-9e0b-11e6-8331-be49ca3eeab9.png)
+
+![](https://cloud.githubusercontent.com/assets/174864/19833322/bc7f168a-9e0b-11e6-9c84-c2a746538edc.png)
+
+![](https://cloud.githubusercontent.com/assets/174864/19833327/bc8b2c2c-9e0b-11e6-9272-8d84ad3b7116.png)
+
+
 ## Platform notices
 
 ### Windows
 On **Windows 10** the addon uses ```SetWindowCompositionAttribute```, which is an undocumented API, which means it can be changed by Microsoft any time and break the functionality.
 
 ### MacOS
-Requires Yosemite and above.Some materials require 10.11+.
+Requires Yosemite and above.Some materials require 10.11+. Since this is the case, if you use a material that's not available on that macOS version, it will
+fallback to the default material value which is `0`, which might not be what you want.
 
 
 ## License

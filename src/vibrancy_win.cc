@@ -105,11 +105,9 @@ namespace Vibrancy
 		return result;
 	}
 
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer, v8::Local<v8::Array> options)
+	VibrancyHelper::VibrancyHelper()
 	{
-		unsigned long handle = *reinterpret_cast<unsigned long*>(windowHandleBuffer);
-		HWND hwnd = (HWND)handle;
-		return SetBlurBehind(hwnd, true);
+		
 	}
 
 	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
@@ -119,12 +117,15 @@ namespace Vibrancy
 		return SetBlurBehind(hwnd, false);
 	}
 
-	// These are here so compiling doesnt fail.
+	
 	int32_t VibrancyHelper::AddView(unsigned char* buffer,v8::Local<v8::Array> options)
 	{
-		EnableVibrancy(buffer,options);
-		return -1;
+		unsigned long handle = *reinterpret_cast<unsigned long*>(buffer);
+		HWND hwnd = (HWND)handle;
+		return SetBlurBehind(hwnd, true);
 	}
+
+	// These are here so compiling doesnt fail.
 	bool VibrancyHelper::UpdateView(unsigned char* buffer,v8::Local<v8::Array> options)
 	{
 		return false;
