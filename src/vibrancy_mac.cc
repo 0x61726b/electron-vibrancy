@@ -252,13 +252,7 @@ namespace Vibrancy
 		//NSLog(@"X:%i Y:%i W:%i H:%i Resize:%i Mat:%i ViewId: %i",viewOptions.X,viewOptions.Y,viewOptions.Width,viewOptions.Height, viewOptions.ResizeMask,viewOptions.Material,viewOptions.ViewId);
 		return viewOptions;
 	}
-
-	bool VibrancyHelper::EnableVibrancy(unsigned char* windowHandleBuffer,v8::Local<v8::Array> options)
-	{
-		//See AddView
-		return false;
-	}
-
+	
 	bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer)
 	{
 		if(views_.size() > 0)
