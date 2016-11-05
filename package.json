@@ -21,6 +21,7 @@
   "scripts": {
     "test-spectron": "mocha --compilers coffee:coffee-script/register ./spec/vibrancy-spec.coffee",
     "test-module": "mocha --compilers coffee:coffee-script/register ./spec/module-spec.coffee",
+    "run-test-app": "./node_modules/.bin/electron ./spec/app",
     "lint-cpp": "python scripts/lint.py",
     "lint-coffee": "coffeelint spec",
     "rebuild": "node-gyp rebuild --target=1.4.2 --arch=x64 --debug --dist-url=https://atom.io/download/atom-shell",

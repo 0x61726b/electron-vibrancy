@@ -32,7 +32,7 @@ describe 'Module General', ->
     result.should.be.equal(-1)
 
 
-  it 'SetVibrancy should return Integer',->
-    result = vibrancy.SetVibrancy(dummyBrowserWindow,0)
-    (typeof result).should.be.equal('number')
+  #it 'SetVibrancy should return Integer',->
+  #result = vibrancy.SetVibrancy(dummyBrowserWindow,0)
+  #(typeof result).should.be.equal('number')
 
