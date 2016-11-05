@@ -23,7 +23,7 @@
 // SOFTWARE.
 //----------------------------------------------------------------------------
 #include "./Vibrancy.h"
-#include <dwmapi.h>
+
 //----------------------------------------------------------------------------
 namespace Vibrancy {
     static VibrancyHelper vibHelper_;
