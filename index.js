@@ -33,6 +33,9 @@ function DisableVibrancy(buffer) {
 
 module.exports = {
 	SetVibrancy: function(window,material) {
+		if(window == null || typeof window == 'undefined')
+			return -1;
+		
 		var width = window.getSize()[0];
 		var height = window.getSize()[1];
 

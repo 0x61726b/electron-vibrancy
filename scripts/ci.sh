@@ -16,3 +16,12 @@ npm --version
 
 npm install
 npm run rebuild
+
+# Run linters
+npm run lint-cpp
+npm run lint-coffee
+
+# Run tests
+npm run test-spectron
+npm run nrebuild
+npm run test-module

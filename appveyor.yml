@@ -10,4 +10,5 @@ test_script:
   - node --version
   - npm --version
   - npm install
+  - ./scripts/ci.bat
 build: off # Required to make appveyor behave

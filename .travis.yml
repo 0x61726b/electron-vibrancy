@@ -10,15 +10,15 @@ env:
   - NODE_VERSION="7.0.0"
 
 install:
-  - chmod a+x ./travis-build.sh
+  - chmod a+x ./scripts/ci.sh
 
 script:
-  - ./travis-build.sh
+  - ./scripts/ci.sh
 
 
 
 notifications:
   email:
     recipients: arkenthera@gmail.com
-  on_success: always
+  on_success: never
   on_failure: always

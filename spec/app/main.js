@@ -1,5 +1,6 @@
 var app = require('electron').app
 var BrowserWindow = require('electron').BrowserWindow
+var path = require('path')
 
 var mainWindow = null
 
@@ -18,7 +19,7 @@ app.on('ready', function () {
   mainWindow.on('closed', function () { mainWindow = null })
   mainWindow.on('ready-to-show',function() {
     var nativeHandleBuffer = mainWindow.getNativeWindowHandle();
-    var electronVibrancy = require('..');
+    var electronVibrancy = require(path.join(__dirname,'..','..'));
     
     // Whole window vibrancy with Material 0 and auto resize
     electronVibrancy.SetVibrancy(mainWindow, 0);

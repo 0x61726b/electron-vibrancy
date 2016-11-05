@@ -20,7 +20,8 @@ Since this is a native addon, you will need your platforms build tools. Visual S
 git clone https://github.com/arkenthera/electron-vibrancy
 cd electron-vibrancy
 npm install
-npm test
+cd spec/app # Go to sample app
+electron . # electron --version should be 1.4.2
 ```
 
 To rebuild again:
@@ -36,10 +37,12 @@ Also available through NPM.
 npm install electron-vibrancy
 ```
 
+To run tests see [scripts/ci](https://github.com/arkenthera/electron-vibrancy/blob/master/scripts/ci.sh)
+
 # Current Supported Platforms
 - macOS 10.10+
 - Windows 10 (stable) It just works ™
-- Windows 8.x (stable + requires modifications)
+- Windows 8.x (unstable + requires modifications)
 - Windows 7 (unstable + requires modifications)
 
 # Things to note
@@ -48,6 +51,7 @@ npm install electron-vibrancy
 - On Windows 8.x, this wont work because Microsoft completely removed Aero Glass feature. It is still possible though but it is not something that an end user should do.
 See Platforms section for more info.
 - On Windows 7, an Aero theme must be activated.
+- If you get `A dynamic link library (DLL) initialization routine failed.` error, it means that the module isn't compiled against Electron or compiled against the wrong version. 
 
 Although it works, I dont recommend using this module on a machine below Windows 10. See platforms section below for more information for macOS.
 
@@ -118,13 +122,12 @@ Returns `Boolean`.
 Updates the `NSVisualEffectView` with the specified properties.
 
 
-### `RemoveView(window,options)` _macOS_
+### `RemoveView(window,viewId)` _macOS_
 
 Returns `Boolean`.
 
 * `window` `BrowserWindow` instance
-* `options` Object
-  * `ViewId`- Integer.Identifier of `NSVisualEffectView`.
+* `ViewId`- Integer.Identifier of `NSVisualEffectView`.
 
 Removes the `NSVisualEffectView`.
 
