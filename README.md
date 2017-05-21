@@ -23,7 +23,7 @@ git clone https://github.com/arkenthera/electron-vibrancy
 cd electron-vibrancy
 npm install
 cd spec/app # Go to sample app
-electron . # electron --version should be 1.4.2
+electron . # electron --version should be 1.6.8
 ```
 
 To rebuild again:
