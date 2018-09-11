@@ -86,13 +86,17 @@ namespace Vibrancy {
         } else {
             HRESULT hr = S_OK;
 
+            RECT rect;  
+            GetWindowRect(hwnd, &rect);
+            HRGN hRgn = CreateRectRgn(5, 5, rect.right - rect.left - 5, rect.bottom - rect.top - 5);
+
             // Create and populate the Blur Behind structure
             DWM_BLURBEHIND bb = { 0 };
 
             // Enable Blur Behind and apply to the entire client area
-            bb.dwFlags = DWM_BB_ENABLE;
-            bb.fEnable = true;
-            bb.hRgnBlur = NULL;
+            bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+            bb.fEnable = state;
+            bb.hRgnBlur = hRgn;
 
             // Apply Blur Behind
             hr = DwmEnableBlurBehindWindow(hwnd, &bb);
