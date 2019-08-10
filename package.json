@@ -1,6 +1,6 @@
 {
   "name": "@hxkuc/electron-vibrancy",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Enable blurring the back of your transparent BrowserWindow using this simple module.",
   "main": "index.js",
   "devDependencies": {
