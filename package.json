@@ -1,6 +1,6 @@
 {
-  "name": "electron-vibrancy",
-  "version": "0.1.3",
+  "name": "@hxkuc/electron-vibrancy",
+  "version": "0.1.8",
   "description": "Enable blurring the back of your transparent BrowserWindow using this simple module.",
   "main": "index.js",
   "devDependencies": {
@@ -8,15 +8,15 @@
     "chai-as-promised": "^6.0.0",
     "coffee-script": "^1.12.6",
     "coffeelint": "^1.16.0",
-    "electron": "^1.6.8",
+    "electron": "^6.0.2",
     "mocha": "^3.4.1",
-    "node-gyp": "^3.6.1",
-    "node-pre-gyp": "^0.6.34",
+    "node-gyp": "^5.0.3",
+    "node-pre-gyp": "^0.13.0",
     "spectron": "^3.6.4"
   },
   "dependencies": {
-    "bindings": "^1.2.1",
-    "nan": "^2.6.2"
+    "bindings": "^1.5.0",
+    "nan": "^2.14.0"
   },
   "scripts": {
     "test-spectron": "mocha --compilers coffee:coffee-script/register ./spec/vibrancy-spec.coffee",
@@ -24,8 +24,8 @@
     "run-test-app": "./node_modules/.bin/electron ./spec/app",
     "lint-cpp": "python scripts/lint.py",
     "lint-coffee": "coffeelint spec",
-    "rebuild": "node-gyp rebuild --target=1.6.8 --runtime=electron --arch=x64 --debug --dist-url=https://atom.io/download/atom-shell",
-    "build": "node-gyp build --target=1.6.8 --runtime=electron --arch=x64 --debug --dist-url=https://atom.io/download/atom-shell",
+    "rebuild": "node-gyp rebuild --runtime=electron --debug --dist-url=https://npm.taobao.org/mirrors/atom-shell",
+    "build": "node-gyp build --target=1.6.8 --runtime=electron --arch=x64 --debug --dist-url=https://npm.taobao.org/mirrors/atom-shell",
     "nrebuild": "node-gyp rebuild --debug --arch=x64 --verbose",
     "nbuild": "node-gyp build --debug",
     "conf": "node-gyp configure --arch=x64",
@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arkenthera/electron-vibrancy.git"
+    "url": "git+https://github.com/hxkuc/electron-vibrancy.git"
   },
   "keywords": [
     "electron",
@@ -43,11 +43,11 @@
     "transparent",
     "transparency"
   ],
-  "author": "arkenthera",
+  "author": "hxkuc",
   "license": "MIT",
   "gypfile": true,
   "bugs": {
-    "url": "https://github.com/arkenthera/electron-vibrancy/issues"
+    "url": "https://github.com/hxkuc/electron-vibrancy/issues"
   },
-  "homepage": "https://github.com/arkenthera/electron-vibrancy#readme"
+  "homepage": "https://github.com/hxkuc/electron-vibrancy#readme"
 }
