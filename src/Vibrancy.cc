@@ -83,7 +83,7 @@ namespace Vibrancy {
         if (handleBuffer->IsNull())
             return;
 
-        bool toggleState = toggleStateObj->BooleanValue();
+        bool toggleState = toggleStateObj->BooleanValue(isolate);
 
         char* bufferData = node::Buffer::Data(handleBuffer);
 

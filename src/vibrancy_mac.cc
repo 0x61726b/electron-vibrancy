@@ -27,21 +27,24 @@
 
 #include "./VibrancyHelper.h"
 
-namespace Vibrancy {
-    bool IsHigherThanYosemite() {
+namespace Vibrancy
+{
+    bool IsHigherThanYosemite()
+    {
         NSOperatingSystemVersion operatingSystemVersion =
             [[NSProcessInfo processInfo] operatingSystemVersion];
-        return operatingSystemVersion.majorVersion == 10
-            &&
-        operatingSystemVersion.minorVersion > 10;
+        return operatingSystemVersion.majorVersion == 10 &&
+               operatingSystemVersion.minorVersion > 10;
     }
 
-    VibrancyHelper::VibrancyHelper() : viewIndex_(0) {
+    VibrancyHelper::VibrancyHelper() : viewIndex_(0)
+    {
     }
 
-    int32_t VibrancyHelper::AddView(unsigned char* buffer,
-        v8::Local<v8::Array> options) {
-        NSView* view = *reinterpret_cast<NSView**>(buffer);
+    int32_t VibrancyHelper::AddView(unsigned char *buffer,
+                                    v8::Local<v8::Array> options)
+    {
+        NSView *view = *reinterpret_cast<NSView **>(buffer);
 
         if (!view)
             return -1;
@@ -63,11 +66,11 @@ namespace Vibrancy {
         if (viewOptions.Y < 0)
             return viewId;
 
-        NSVisualEffectView* vibrantView =
+        NSVisualEffectView *vibrantView =
             [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(viewOptions.X,
-                viewOptions.Y,
-                viewOptions.Width,
-                viewOptions.Height)];
+                                                                 viewOptions.Y,
+                                                                 viewOptions.Width,
+                                                                 viewOptions.Height)];
 
         [vibrantView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
 
@@ -77,11 +80,13 @@ namespace Vibrancy {
             [vibrantView setAutoresizingMask:NSViewHeightSizable];
         if (viewOptions.ResizeMask == 2)
             [vibrantView
-                setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+                setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
         // would crash if you give anything other than [0,9]
-        if (viewOptions.Material >= 0 && viewOptions.Material <= 9) {
-            if (viewOptions.Material > 3 && !IsHigherThanYosemite()) {
+        if (viewOptions.Material >= 0 && viewOptions.Material <= 9)
+        {
+            if (viewOptions.Material > 3 && !IsHigherThanYosemite())
+            {
                 return -1;
             }
             [vibrantView
@@ -99,16 +104,17 @@ namespace Vibrancy {
         return viewId;
     }
 
-    bool VibrancyHelper::UpdateView(unsigned char* buffer,
-        v8::Local<v8::Array> options) {
-        NSView* view = *reinterpret_cast<NSView**>(buffer);
+    bool VibrancyHelper::UpdateView(unsigned char *buffer,
+                                    v8::Local<v8::Array> options)
+    {
+        NSView *view = *reinterpret_cast<NSView **>(buffer);
 
         ViewOptions viewOptions = GetOptions(options);
 
         if (viewOptions.ViewId == -1)
             return false;
 
-        NSVisualEffectView* vibrantView = views_[viewOptions.ViewId];
+        NSVisualEffectView *vibrantView = views_[viewOptions.ViewId];
 
         if (!vibrantView)
             return false;
@@ -142,41 +148,41 @@ namespace Vibrancy {
         return true;
     }
 
-    bool VibrancyHelper::RemoveView(unsigned char* buffer,
-        v8::Local<v8::Array> options) {
+    bool VibrancyHelper::RemoveView(unsigned char *buffer,
+                                    v8::Local<v8::Array> options)
+    {
         bool result = false;
-        V8Value vView =
-            options->Get(
-                v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "ViewId"));
+        V8Value vView = Nan::Get(options, Nan::New<v8::String>("ViewId").ToLocalChecked()).ToLocalChecked();
 
         if (vView->IsNull() || !vView->IsInt32())
             return result;
 
-        int viewId = vView->Int32Value();
+        int viewId = vView->Int32Value(Nan::GetCurrentContext()).ToChecked();
 
         if (viewId == -1 || viewId > static_cast<int>(views_.size()))
             return result;
 
-        std::map<int, NSVisualEffectView*>::iterator It = views_.find(viewId);
+        std::map<int, NSVisualEffectView *>::iterator It = views_.find(viewId);
 
         if (It == views_.end())
             return false;
 
-        NSVisualEffectView* vibrantView = It->second;
+        NSVisualEffectView *vibrantView = It->second;
 
         if (!vibrantView)
             return result;
 
         views_.erase(viewId);
 
-        NSView* viewToRemove = vibrantView;
+        NSView *viewToRemove = vibrantView;
         [viewToRemove removeFromSuperview];
 
         return true;
     }
 
     VibrancyHelper::ViewOptions
-        VibrancyHelper::GetOptions(v8::Local<v8::Array> options) {
+    VibrancyHelper::GetOptions(v8::Local<v8::Array> options)
+    {
         VibrancyHelper::ViewOptions viewOptions;
         viewOptions.ResizeMask = 2;
         viewOptions.Width = 0;
@@ -186,65 +192,68 @@ namespace Vibrancy {
         viewOptions.ViewId = -1;
         viewOptions.Material = 0;
 
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
-        V8Value vPosition = options->Get(
-            v8::String::NewFromUtf8(isolate, "Position"));
-        V8Value vSize = options->Get(v8::String::NewFromUtf8(isolate, "Size"));
+        V8Value vPosition = Nan::Get(options, Nan::New<v8::String>("Position").ToLocalChecked()).ToLocalChecked();
+        V8Value vSize = Nan::Get(options, Nan::New<v8::String>("Size").ToLocalChecked()).ToLocalChecked();
 
-        V8Value vAutoResizeMask = options->Get(
-            v8::String::NewFromUtf8(isolate, "ResizeMask"));
-        V8Value vViewId = options->Get(
-            v8::String::NewFromUtf8(isolate, "ViewId"));
-        V8Value vMaterial = options->Get(
-            v8::String::NewFromUtf8(isolate, "Material"));
+        V8Value vAutoResizeMask = Nan::Get(options, Nan::New<v8::String>("ResizeMask").ToLocalChecked()).ToLocalChecked();
+        V8Value vViewId = Nan::Get(options, Nan::New<v8::String>("ViewId").ToLocalChecked()).ToLocalChecked();
+        V8Value vMaterial = Nan::Get(options, Nan::New<v8::String>("Material").ToLocalChecked()).ToLocalChecked();
 
-        if (!vMaterial->IsNull() && vMaterial->IsInt32()) {
-            viewOptions.Material = vMaterial->Int32Value();
+        if (!vMaterial->IsNull() && vMaterial->IsInt32())
+        {
+            viewOptions.Material = vMaterial->Int32Value(Nan::GetCurrentContext()).ToChecked();
         }
 
         if (!vViewId->IsNull() && vViewId->IsInt32())
-            viewOptions.ViewId = vViewId->Int32Value();
+            viewOptions.ViewId = vViewId->Int32Value(Nan::GetCurrentContext()).ToChecked();
 
-        if (!vSize->IsUndefined() && !vSize->IsNull()) {
+        if (!vSize->IsUndefined() && !vSize->IsNull())
+        {
             V8Array vaSize =
                 v8::Local<v8::Array>::Cast(vSize);
 
             V8Value vWidth =
-                vaSize->Get(v8::String::NewFromUtf8(isolate, "width"));
+                Nan::Get(vaSize, Nan::New<v8::String>("width").ToLocalChecked()).ToLocalChecked();
             V8Value vHeight =
-                vaSize->Get(v8::String::NewFromUtf8(isolate, "height"));
+                Nan::Get(vaSize, Nan::New<v8::String>("height").ToLocalChecked()).ToLocalChecked();
 
             if (!vWidth->IsNull() && vWidth->IsInt32())
-                viewOptions.Width = vWidth->Int32Value();
+                viewOptions.Width = vWidth->Int32Value(Nan::GetCurrentContext()).ToChecked();
 
             if (!vHeight->IsNull() && vHeight->IsInt32())
-                viewOptions.Height = vHeight->Int32Value();
+                viewOptions.Height = vHeight->Int32Value(Nan::GetCurrentContext()).ToChecked();
         }
 
-        if (!vPosition->IsUndefined() && !vPosition->IsNull()) {
+        if (!vPosition->IsUndefined() && !vPosition->IsNull())
+        {
             V8Array vaPosition = v8::Local<v8::Array>::Cast(vPosition);
 
-            V8Value vX = vaPosition->Get(v8::String::NewFromUtf8(isolate, "x"));
-            V8Value vY = vaPosition->Get(v8::String::NewFromUtf8(isolate, "y"));
+            V8Value vX = Nan::Get(vaPosition, Nan::New<v8::String>("x").ToLocalChecked()).ToLocalChecked();
+            V8Value vY = Nan::Get(vaPosition, Nan::New<v8::String>("y").ToLocalChecked()).ToLocalChecked();
 
             if (!vX->IsNull() && vX->IsInt32())
-                viewOptions.X = vX->Int32Value();
+                viewOptions.X = vX->Int32Value(Nan::GetCurrentContext()).ToChecked();
 
             if (!vY->IsNull() && vY->IsInt32())
-                viewOptions.Y = vY->Int32Value();
+                viewOptions.Y = vY->Int32Value(Nan::GetCurrentContext()).ToChecked();
         }
 
-        if (!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32()) {
-            viewOptions.ResizeMask = vAutoResizeMask->Int32Value();
+        if (!vAutoResizeMask->IsNull() && vAutoResizeMask->IsInt32())
+        {
+            viewOptions.ResizeMask = vAutoResizeMask->Int32Value(Nan::GetCurrentContext()).ToChecked();
         }
         return viewOptions;
     }
 
-    bool VibrancyHelper::DisableVibrancy(unsigned char* windowHandleBuffer) {
-        if (views_.size() > 0) {
-            for (size_t i = 0; i < views_.size(); ++i) {
-                NSView* viewToRemove = views_[i];
+    bool VibrancyHelper::DisableVibrancy(unsigned char *windowHandleBuffer)
+    {
+        if (views_.size() > 0)
+        {
+            for (size_t i = 0; i < views_.size(); ++i)
+            {
+                NSView *viewToRemove = views_[i];
                 [viewToRemove removeFromSuperview];
             }
 
@@ -252,4 +261,4 @@ namespace Vibrancy {
         }
         return true;
     }
-}  // namespace Vibrancy
+} // namespace Vibrancy
