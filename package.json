@@ -26,7 +26,7 @@
     "lint-coffee": "coffeelint spec",
     "rebuild": "node-gyp rebuild --target=v11.2.3 --runtime=electron --arch=ia32 --debug --dist-url=https://atom.io/download/atom-shell",
     "build": "node-gyp build --target=v11.2.3 --runtime=electron --arch=ia32 --debug --dist-url=https://atom.io/download/atom-shell",
-    "nrebuild": "node-gyp rebuild --debug --arch=x64 --verbose",
+    "nrebuild": "node-gyp rebuild --debug --arch=ia32 --verbose",
     "nbuild": "node-gyp build --debug",
     "conf": "node-gyp configure --arch=ia32",
     "postinstall": "npm run rebuild"
